@@ -5,8 +5,8 @@
             "name": "Flask Server",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/server/app.py",
-            "cwd": "${workspaceFolder}/server",
+            "program": "${workspaceFolder}/htgen/app.py",
+            "cwd": "${workspaceFolder}/htgen",
             "env": {
                 "FLASK_APP": "app.py",
                 "FLASK_ENV": "development",

@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request, render_template
 from werkzeug.utils import secure_filename
 from ai import init_vertex_ai, get_image_hashtags
 
-app = Flask(__name__, template_folder=Path.cwd().parent / 'client')
+app = Flask(__name__)
 
 # Load environment variables based on environment
 if os.getenv('FLASK_ENV') == 'production':
