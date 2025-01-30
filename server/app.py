@@ -1,9 +1,24 @@
 from pathlib import Path
+import os
 
+from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
+from ai import init_vertex_ai, get_image_hashtags
 
 app = Flask(__name__)
+
+# Load environment variables based on environment
+if os.getenv('FLASK_ENV') == 'production':
+    load_dotenv('.env')
+else:
+    load_dotenv('.env.dev')
+
+# Initialize Vertex AI
+GOOGLE_CLOUD_PROJECT = os.getenv('GOOGLE_CLOUD_PROJECT')
+if not GOOGLE_CLOUD_PROJECT:
+    raise ValueError("GOOGLE_CLOUD_PROJECT environment variable is required")
+init_vertex_ai(GOOGLE_CLOUD_PROJECT)
 
 # Configure upload folder
 UPLOAD_FOLDER = 'uploads'
@@ -41,8 +56,15 @@ def upload_image():
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(Path(app.config['UPLOAD_FOLDER']) / filename)
-        return jsonify('ok')
+        file_path = Path(app.config['UPLOAD_FOLDER']) / filename
+        file.save(file_path)
+        
+        try:
+            # Get hashtags from the image
+            hashtags = get_image_hashtags(file_path)
+            return jsonify({'hashtags': hashtags})
+        except Exception as e:
+            return jsonify({'error': f'Error analyzing image: {str(e)}'}), 500
 
     return jsonify({'error': 'File type not allowed'}), 400
 

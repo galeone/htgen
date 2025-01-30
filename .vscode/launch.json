@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flask Server",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/server/app.py",
+            "cwd": "${workspaceFolder}/server",
+            "env": {
+                "FLASK_APP": "app.py",
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [],
+            "jinja": true,
+            "justMyCode": true
+        }
+    ]
+}
