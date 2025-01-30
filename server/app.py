@@ -2,11 +2,11 @@ from pathlib import Path
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from werkzeug.utils import secure_filename
 from ai import init_vertex_ai, get_image_hashtags
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=Path.cwd().parent / 'client')
 
 # Load environment variables based on environment
 if os.getenv('FLASK_ENV') == 'production':
@@ -58,7 +58,7 @@ def upload_image():
         filename = secure_filename(file.filename)
         file_path = Path(app.config['UPLOAD_FOLDER']) / filename
         file.save(file_path)
-        
+
         try:
             # Get hashtags from the image
             hashtags = get_image_hashtags(file_path)
@@ -67,6 +67,12 @@ def upload_image():
             return jsonify({'error': f'Error analyzing image: {str(e)}'}), 500
 
     return jsonify({'error': 'File type not allowed'}), 400
+
+
+@app.route("/")
+def index():
+    print("Hello, pwd: ", os.getcwd())
+    return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
