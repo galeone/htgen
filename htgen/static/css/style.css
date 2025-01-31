@@ -89,7 +89,9 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 4px;
 }
 
 .hashtags-text {
@@ -119,7 +121,7 @@ button[type="submit"].button:hover {
     background-color: #0056b3;
 }
 
-#preview {
+#preview, .history-thumbnail {
     max-width: 100%;
     margin-top: 20px;
 }

@@ -135,8 +135,78 @@
         }
     </script>
 
-    <!-- Service Worker Registration -->
+    <script src="{{ url_for('static', filename='js/localstorage.js') }}"></script>
+
     <script>
+        // Load existing history when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const history = getFromStorage();
+            if (history.length > 0) {
+                showHistory(history);
+            }
+        });
+
+        function showHistory(entries) {
+            const historyHTML = entries.map(entry => `
+                <div class="history-entry">
+                    <img src="${entry.image}" class="history-thumbnail">
+                    <div class="hashtags-container success">
+                        <div class="hashtags-text">${entry.hashtags.join(' ')}</div>
+                        <button class="copy-button" onclick="copyHashtags(this)">Copy</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const historySection = document.createElement('div');
+            historySection.id = 'history';
+            historySection.innerHTML = `
+                <h2>Previous Generations</h2>
+                ${historyHTML}
+            `;
+            document.querySelector('.container').appendChild(historySection);
+        }
+
+        // Modified form submit handler to save results
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showResult('Please select an image file.', false);
+                return;
+            }
+
+            // Show spinner and hide previous results
+            spinner.style.display = 'block';
+            result.style.display = 'none';
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/hashtags', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const hashtags = data.hashtags.join(' ');
+                    showHashtagsWithCopy(hashtags);
+                    // Save to localStorage after successful generation
+                    const imageData = preview.src;
+                    saveToStorage(imageData, data.hashtags);
+                } else {
+                    showResult('Error: ' + data.error, false);
+                }
+            } catch (error) {
+                showResult('Error: Could not connect to the server. Make sure the server is running.', false);
+            } finally {
+                spinner.style.display = 'none';
+            }
+        });
+
+        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register("{{url_for('static', filename='js/sw.js')}}")
