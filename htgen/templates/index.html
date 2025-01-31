@@ -24,7 +24,10 @@
 <body>
     <div class="container">
         <div id="homeSection" class="section active">
-            <h1>Welcome<br>to Hashtag AI</h1>
+            <div class="header">
+                <h1>Welcome<br>to Hashtag AI</h1>
+                <img src="{{url_for('static', filename='icons/icon-144x144.png')}}" alt="Hashtag AI Logo" class="header-logo">
+            </div>
             <p class="info">Generate hashtags from images using AI</p>
             <form id="uploadForm">
                 <div class="camera-input">

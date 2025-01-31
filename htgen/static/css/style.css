@@ -345,6 +345,34 @@ body {
     display: block;
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 20px 0;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+.header-logo {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-left: 30px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.header-logo:hover {
+    transform: scale(1.05);
+}
+
 .info {
     color: #6c757d;
     font-size: 12px;

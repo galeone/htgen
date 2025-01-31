@@ -73,8 +73,11 @@ def generate_hashtags():
     # Check if the post request has the file part
     if "file" not in request.files:
         return jsonify({"error": "No file part"}), 400
-
+    if "language" not in request.form:
+        return jsonify({"error": "No language selected"}), 400
+    
     file = request.files["file"]
+    language = request.form["language"]
 
     # If user does not select file, browser also
     # submit an empty part without filename
@@ -88,7 +91,7 @@ def generate_hashtags():
 
         try:
             # Get hashtags from the image
-            hashtags = get_image_hashtags(file_path)
+            hashtags = get_image_hashtags(file_path, language)
             return jsonify({"hashtags": hashtags})
         except Exception as e:
             return jsonify({"error": f"Error analyzing image: {str(e)}"}), 500

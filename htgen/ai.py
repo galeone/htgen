@@ -16,12 +16,13 @@ def init_vertex_ai(project_id: str, location: str = "us-central1"):
     aiplatform.init(project=project_id, location=location)
 
 
-def get_image_hashtags(image_path: str | Path) -> list[str]:
+def get_image_hashtags(image_path: str | Path, language: str) -> list[str]:
     """
     Analyze an image using Vertex AI Gemini and generate relevant hashtags.
 
     Args:
         image_path (str | Path): Path to the image file
+        language (str): The language to use for the generated hashtags
 
     Returns:
         list[str]: List of relevant hashtags
@@ -60,7 +61,8 @@ def get_image_hashtags(image_path: str | Path) -> list[str]:
         "Analyze this image and generate a list of relevant hashtags that describe its content, style, mood, and key elements. "
         "Return only the hashtags, separated by spaces, without any additional text. Each hashtag should start with #."
         + location_prompt
-        + "Limit the number of hashtags to 20 and sort them by relevance.",
+        + "Limit the number of hashtags to 20 and sort them by relevance."
+        f"The language of the hashtag must be: {language} - international terms are allowed, if used in the context of the image.",
         Part.from_data(image_data, mime_type=f"image/{image_path.suffix[1:]}"),
     ]
 
