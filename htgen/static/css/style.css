@@ -6,7 +6,7 @@ body {
 
 .container {
     background-color: white;
-    padding: 0 10px 0 10px;
+    padding: 0 10px 10px 10px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -238,26 +238,39 @@ body {
     color: #155724;
 }
 
-.button {
-    background-color: #6c757d;
-    color: white;
-    padding: 10px 20px;
+.generate-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px;
     border: none;
-    border-radius: 4px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #007bff, #00bfff);
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+    margin-top: 20px;
 }
 
-.button:hover {
-    background-color: #5a6268;
+.generate-button svg {
+    width: 24px;
+    height: 24px;
 }
 
-button[type="submit"].button {
-    background-color: #007bff;
+.generate-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+    background: linear-gradient(135deg, #0056b3, #0098cc);
 }
 
-button[type="submit"].button:hover {
-    background-color: #0056b3;
+.generate-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.2);
 }
 
 #preview, .history-thumbnail {
