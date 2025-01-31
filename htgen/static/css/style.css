@@ -22,16 +22,100 @@ body {
     margin-bottom: 10px;
 }
 
-.button {
-    background-color: #007bff;
+/* Custom file input styling */
+.file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.file-input-wrapper input[type=file] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.file-input-wrapper .file-input-button {
+    background-color: #6c757d;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    display: inline-block;
+}
+
+.file-input-wrapper:hover .file-input-button {
+    background-color: #5a6268;
+}
+
+/* Loading spinner */
+.spinner {
+    display: none;
+    width: 40px;
+    height: 40px;
+    margin: 20px auto;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Copy button */
+.copy-button {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.copy-button:hover {
+    background-color: #218838;
+}
+
+.hashtags-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.hashtags-text {
+    flex-grow: 1;
+    word-break: break-all;
+}
+
+.button {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .button:hover {
+    background-color: #5a6268;
+}
+
+button[type="submit"].button {
+    background-color: #007bff;
+}
+
+button[type="submit"].button:hover {
     background-color: #0056b3;
 }
 

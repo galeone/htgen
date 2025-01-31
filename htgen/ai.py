@@ -37,7 +37,9 @@ def get_image_hashtags(image_path: str | Path) -> list[str]:
 
     # Create the prompt parts
     prompt = [
-        "Analyze this image and generate a list of relevant hashtags that describe its content, style, mood, and key elements. Return only the hashtags, separated by spaces, without any additional text. Each hashtag should start with #.",
+        "Analyze this image and generate a list of relevant hashtags that describe its content, style, mood, and key elements. "
+        "Return only the hashtags, separated by spaces, without any additional text. Each hashtag should start with #. "
+        "Limit the number of hashtags to 20 and sort them by relevance.",
         Part.from_data(image_data, mime_type=f"image/{image_path.suffix[1:]}"),
     ]
 
