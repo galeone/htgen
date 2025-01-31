@@ -84,6 +84,7 @@ body {
     transition: all 0.2s ease;
     margin: 0 auto;
     max-width: 400px;
+    min-height: 200px;
 }
 
 .camera-label:hover {
@@ -110,6 +111,50 @@ body {
 
 .camera-input input[type=file] {
     display: none;
+}
+
+.image-preview {
+    position: relative;
+    margin: 0 auto;
+    max-width: 400px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid #ced4da;
+}
+
+.image-preview img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.remove-image {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.remove-image:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+.remove-image svg {
+    width: 20px;
+    height: 20px;
+    color: #dc3545;
 }
 
 /* Loading spinner */

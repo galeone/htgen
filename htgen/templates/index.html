@@ -28,13 +28,22 @@
             <p class="info">Generate hashtags from images using AI</p>
             <form id="uploadForm">
                 <div class="camera-input">
-                    <label for="fileInput" class="camera-label">
+                    <div id="cameraPlaceholder" class="camera-label">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                             <circle cx="12" cy="13" r="4"/>
                         </svg>
                         <span>Take a photo or select from gallery</span>
-                    </label>
+                    </div>
+                    <div id="imagePreview" class="image-preview" style="display: none;">
+                        <button type="button" class="remove-image" onclick="removeImage()">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                        <img id="preview">
+                    </div>
                     <input type="file" id="fileInput" name="file" accept="image/*" capture>
                 </div>
                 <div class="input-group">
@@ -59,7 +68,6 @@
                 </div>
             </form>
             <div id="spinner" class="spinner"></div>
-            <img id="preview" style="display: none;">
             <div id="result" style="display: none;"></div>
         </div>
 
@@ -136,13 +144,27 @@
             });
         });
 
+        // Function to remove selected image
+        function removeImage() {
+            document.getElementById('preview').src = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('cameraPlaceholder').style.display = 'flex';
+            fileInput.value = ''; // Clear the file input
+        }
+
+        // Click handler for camera placeholder
+        document.getElementById('cameraPlaceholder').addEventListener('click', () => {
+            fileInput.click();
+        });
+
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('cameraPlaceholder').style.display = 'none';
                 };
                 reader.readAsDataURL(file);
             }
@@ -250,14 +272,14 @@
                     return `
                     <div class="history-entry">
                         <img src="${entry.image}" class="history-thumbnail">
-                        <div class="hashtags-container success">
-                            <div class="entry-meta">
-                                <div class="timestamp">${formattedDate}</div>
-                                <div class="meta-info">
-                                    <span class="language-tag">${getLangName(entry.language)}</span>
-                                    ${entry.topic ? `<span class="topic-tag">Topic: ${entry.topic}</span>` : ''}
-                                </div>
+                        <div class="entry-meta">
+                            <div class="meta-info">
+                                <span class="timestamp">${formattedDate}</span>
+                                <span class="language-tag">${getLangName(entry.language)}</span>
+                                ${entry.topic ? `<span class="topic-tag">Topic: ${entry.topic}</span>` : ''}
                             </div>
+                        </div>
+                        <div class="hashtags-container success">
                             <div class="hashtags-text">${entry.hashtags.join(' ')}</div>
                             <button class="copy-button" onclick="copyHashtags(this)">Copy</button>
                         </div>
