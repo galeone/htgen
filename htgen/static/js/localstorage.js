@@ -1,8 +1,10 @@
-function saveToStorage(imageData, hashtags) {
+function saveToStorage(imageData, hashtags, language, topic) {
     const entry = {
         timestamp: new Date().getTime(),
         image: imageData,
-        hashtags: hashtags
+        hashtags: hashtags,
+        language: language,
+        topic: topic || null
     };
     
     // Get existing entries or initialize array

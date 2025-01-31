@@ -35,6 +35,23 @@
                     </div>
                 </div>
                 <div class="input-group">
+                    <label for="languageSelect">Language for hashtags:</label>
+                    <select id="languageSelect" name="language" class="form-select">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="it">Italian</option>
+                        <option value="pt">Portuguese</option>
+                        <option value="nl">Dutch</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="topicInput">Topic (optional):</label>
+                    <div class="input-hint">Add a specific topic to focus the hashtag generation (e.g., "running", "cooking")</div>
+                    <input type="text" id="topicInput" name="topic" class="form-input" placeholder="Enter a topic">
+                </div>
+                <div class="input-group">
                     <button type="submit" class="button">Generate Hashtags</button>
                 </div>
             </form>
@@ -71,6 +88,36 @@
         const preview = document.getElementById('preview');
         const result = document.getElementById('result');
         const spinner = document.getElementById('spinner');
+        const languageSelect = document.getElementById('languageSelect');
+        const topicInput = document.getElementById('topicInput');
+
+        // Helper function to get full language name from code
+        function getLangName(code) {
+            const languages = {
+                'en': 'English',
+                'es': 'Spanish',
+                'fr': 'French',
+                'de': 'German',
+                'it': 'Italian',
+                'pt': 'Portuguese',
+                'nl': 'Dutch'
+            };
+            return languages[code] || code;
+        }
+
+        // Set default language based on browser language
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get browser language (e.g., "en-US" -> "en")
+            const browserLang = navigator.language.split('-')[0];
+            // Check if we support this language
+            const supportedLangs = Array.from(languageSelect.options).map(opt => opt.value);
+            if (supportedLangs.includes(browserLang)) {
+                languageSelect.value = browserLang;
+            }
+            // Load history
+            const history = getFromStorage();
+            showHistory(history);
+        });
 
         // Menu handling
         document.querySelectorAll('.menu-item').forEach(item => {
@@ -112,6 +159,10 @@
             spinner.style.display = 'block';
             result.style.display = 'none';
             formData.append('file', file);
+            formData.append('language', languageSelect.value);
+            if (topicInput.value.trim()) {
+                formData.append('topic', topicInput.value.trim());
+            }
 
             try {
                 const response = await fetch('/hashtags', {
@@ -126,7 +177,7 @@
                     showHashtagsWithCopy(hashtags);
                     // Save to localStorage after successful generation
                     const imageData = preview.src;
-                    saveToStorage(imageData, data.hashtags);
+                    saveToStorage(imageData, data.hashtags, languageSelect.value, topicInput.value.trim());
                     // Update history section
                     const history = getFromStorage();
                     if (history.length > 0) {
@@ -194,14 +245,20 @@
                     const date = new Date(entry.timestamp);
                     const formattedDate = date.toLocaleString();
                     return `
-                        <div class="history-entry">
-                            <img src="${entry.image}" class="history-thumbnail">
-                            <div class="hashtags-container success">
+                    <div class="history-entry">
+                        <img src="${entry.image}" class="history-thumbnail">
+                        <div class="hashtags-container success">
+                            <div class="entry-meta">
                                 <div class="timestamp">${formattedDate}</div>
-                                <div class="hashtags-text">${entry.hashtags.join(' ')}</div>
-                                <button class="copy-button" onclick="copyHashtags(this)">Copy</button>
+                                <div class="meta-info">
+                                    <span class="language-tag">${getLangName(entry.language)}</span>
+                                    ${entry.topic ? `<span class="topic-tag">Topic: ${entry.topic}</span>` : ''}
+                                </div>
                             </div>
+                            <div class="hashtags-text">${entry.hashtags.join(' ')}</div>
+                            <button class="copy-button" onclick="copyHashtags(this)">Copy</button>
                         </div>
+                    </div>
                     `;
                 }).join('');
             }
