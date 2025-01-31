@@ -11,11 +11,13 @@ app = Flask(__name__)
 
 # Load environment variables based on environment
 if os.getenv("FLASK_ENV") == "production":
-    app.logger.setLevel(logging.WARNING)
+    LEVEL = logging.WARNING
     load_dotenv(".env")
 else:
-    app.logger.setLevel(logging.DEBUG)
+    LEVEL = logging.DEBUG
     load_dotenv(".env.dev")
+app.logger.setLevel(LEVEL)
+logging.basicConfig(level=LEVEL)
 
 # Initialize Vertex AI
 GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")

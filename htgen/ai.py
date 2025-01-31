@@ -36,9 +36,7 @@ def get_image_hashtags(image_path: str | Path) -> list[str]:
     try:
         coordinates = image_coordinates(image_path)
         if coordinates["city"] and coordinates["country"]:
-            location_prompt = (
-                f"the image is taken in {coordinates['city']}, {coordinates['country']}."
-            )
+            location_prompt = f"the image is taken in {coordinates['city']}, {coordinates['country']}."
         elif coordinates["country"]:
             location_prompt = f"the image is taken in {coordinates['country']}."
         elif coordinates["city"]:
