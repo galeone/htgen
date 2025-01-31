@@ -97,6 +97,13 @@ body {
     word-break: break-all;
 }
 
+.timestamp {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 8px;
+    font-style: italic;
+}
+
 .button {
     background-color: #6c757d;
     color: white;
@@ -194,4 +201,18 @@ button[type="submit"].button:hover {
 .info {
     color: #6c757d;
     font-size: 12px;
+}
+
+.empty-history {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.empty-history p {
+    margin: 10px 0;
+    font-size: 14px;
 }

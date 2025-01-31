@@ -181,19 +181,34 @@
         }
 
         function showHistory(entries) {
-            const historyHTML = entries.map(entry => `
-                <div class="history-entry">
-                    <img src="${entry.image}" class="history-thumbnail">
-                    <div class="hashtags-container success">
-                        <div class="hashtags-text">${entry.hashtags.join(' ')}</div>
-                        <button class="copy-button" onclick="copyHashtags(this)">Copy</button>
+            let content;
+            if (entries.length === 0) {
+                content = `
+                    <div class="empty-history">
+                        <p>Your generated hashtags will appear here!</p>
+                        <p>Upload an image in the Home section to get started.</p>
                     </div>
-                </div>
-            `).join('');
+                `;
+            } else {
+                content = entries.map(entry => {
+                    const date = new Date(entry.timestamp);
+                    const formattedDate = date.toLocaleString();
+                    return `
+                        <div class="history-entry">
+                            <img src="${entry.image}" class="history-thumbnail">
+                            <div class="hashtags-container success">
+                                <div class="timestamp">${formattedDate}</div>
+                                <div class="hashtags-text">${entry.hashtags.join(' ')}</div>
+                                <button class="copy-button" onclick="copyHashtags(this)">Copy</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
 
             document.getElementById('historySection').innerHTML = `
                 <h2>Previous Generations</h2>
-                ${historyHTML}
+                ${content}
             `;
         }
     </script>
@@ -204,9 +219,7 @@
         // Load existing history when page loads
         document.addEventListener('DOMContentLoaded', () => {
             const history = getFromStorage();
-            if (history.length > 0) {
-                showHistory(history);
-            }
+            showHistory(history);
         });
 
         // Service Worker Registration
