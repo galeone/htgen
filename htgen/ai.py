@@ -2,6 +2,8 @@ from pathlib import Path
 from google.cloud import aiplatform
 from vertexai.preview.generative_models import GenerativeModel, Part
 
+from metaimage import image_coordinates
+
 
 def init_vertex_ai(project_id: str, location: str = "us-central1"):
     """
@@ -29,6 +31,26 @@ def get_image_hashtags(image_path: str | Path) -> list[str]:
     if not image_path.exists():
         raise FileNotFoundError(f"Image not found at {image_path}")
 
+    # Enhance the prompt with location information if available
+    location_prompt = " "
+    try:
+        coordinates = image_coordinates(image_path)
+        if coordinates["city"] and coordinates["country"]:
+            location_prompt = (
+                f"the image is taken in {coordinates['city']}, {coordinates['country']}."
+            )
+        elif coordinates["country"]:
+            location_prompt = f"the image is taken in {coordinates['country']}."
+        elif coordinates["city"]:
+            location_prompt = f"the image is taken in {coordinates['city']}."
+
+        if location_prompt:
+            location_prompt = (
+                f"When generating the hashtags consider that {location_prompt}. "
+            )
+    except Exception as e:
+        print(f"Error getting location information: {e}")
+
     with open(image_path, "rb") as image_file:
         image_data = image_file.read()
 
@@ -38,8 +60,9 @@ def get_image_hashtags(image_path: str | Path) -> list[str]:
     # Create the prompt parts
     prompt = [
         "Analyze this image and generate a list of relevant hashtags that describe its content, style, mood, and key elements. "
-        "Return only the hashtags, separated by spaces, without any additional text. Each hashtag should start with #. "
-        "Limit the number of hashtags to 20 and sort them by relevance.",
+        "Return only the hashtags, separated by spaces, without any additional text. Each hashtag should start with #."
+        + location_prompt
+        + "Limit the number of hashtags to 20 and sort them by relevance.",
         Part.from_data(image_data, mime_type=f"image/{image_path.suffix[1:]}"),
     ]
 

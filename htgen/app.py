@@ -1,8 +1,9 @@
 from pathlib import Path
+import logging
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request, render_template, send_from_directory
+from flask import Flask, jsonify, request, render_template
 from werkzeug.utils import secure_filename
 from ai import init_vertex_ai, get_image_hashtags
 
@@ -10,8 +11,10 @@ app = Flask(__name__)
 
 # Load environment variables based on environment
 if os.getenv("FLASK_ENV") == "production":
+    app.logger.setLevel(logging.WARNING)
     load_dotenv(".env")
 else:
+    app.logger.setLevel(logging.DEBUG)
     load_dotenv(".env.dev")
 
 # Initialize Vertex AI

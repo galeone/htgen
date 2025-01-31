@@ -1,6 +1,7 @@
 flask
 google-cloud-aiplatform
 python-dotenv
+exif
 
 pip-tools
 pylint
