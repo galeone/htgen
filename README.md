@@ -35,9 +35,23 @@ If you use vscode the `launch.json` file is already configured to run the applic
 
 ## Running with Docker - Production Mode
 
-To run the application using Docker (the server will be deployed in production mode, using `gunicorn`), follow these steps:
+There are two ways to run the application in production mode using Docker:
 
-1. First, ensure you have your Google Cloud credentials JSON file ready. You'll need to mount this file into the container.
+### Option 1: Using Docker Compose (Recommended)
+
+1. Ensure you have your Google Cloud credentials JSON file ready.
+2. Set the `GOOGLE_CREDENTIALS_PATH` environment variable to point to your credentials file:
+   ```bash
+   export GOOGLE_CREDENTIALS_PATH=/path/to/your/credentials.json
+   ```
+3. Start the application:
+   ```bash
+   docker compose up --no-recreate
+   ```
+
+### Option 2: Using Docker CLI
+
+1. First, ensure you have your Google Cloud credentials JSON file ready.
 2. Export the following environment variables:
    ```bash
    export GOOGLE_CLOUD_PROJECT="your-project-id"
@@ -63,10 +77,11 @@ To run the application using Docker (the server will be deployed in production m
 - `GOOGLE_CLOUD_PROJECT`: Your Google Cloud project ID
 - `BUCKET_NAME`: The Google Cloud Storage bucket name for storing images
 - `GOOGLE_APPLICATION_CREDENTIALS`: Path to the credentials file inside the container (should be inside /app, so "/app/credentials.json" is the default value)
+- `GOOGLE_CREDENTIALS_PATH`: (Docker Compose only) Path to your local credentials file
 
 ### Volume Mount
 
-The service account credentials file needs to be mounted into the container. The `-v` flag maps your local credentials file into the container at `/app/credentials.json`.
+The service account credentials file needs to be mounted into the container. Both Docker Compose and the Docker CLI command map your local credentials file into the container at `/app/credentials.json`.
 
 ---
 Google Cloud credits are provided for this project. #VertexAISprint

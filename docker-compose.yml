@@ -1,0 +1,15 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "1025:8000"
+    environment:
+      - GOOGLE_CLOUD_PROJECT=your-project-id
+      - BUCKET_NAME=your-bucket-name
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+      - FLASK_ENV=production
+    volumes:
+      - ${GOOGLE_CREDENTIALS_PATH}:/app/credentials.json
+    restart: unless-stopped

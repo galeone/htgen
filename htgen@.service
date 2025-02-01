@@ -1,0 +1,15 @@
+[Unit]
+Description=Hashtag AI generator
+After=docker.service
+
+[Service]
+Restart=always
+Type=simple
+User=%I
+WorkingDirectory=/home/plox/htgen/
+# Set the value of GOOGLE_CREDENTIALS_PATH here, replace the placeholder value with yours
+ExecStart=/bin/sh -c 'GOOGLE_CREDENTIALS_PATH=/home/plox/htgen/credentials.json /usr/bin/docker compose up --no-recreate'
+ExecStop=/usr/bin/docker compose stop
+
+[Install]
+WantedBy=multi-user.target
