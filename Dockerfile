@@ -11,7 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
+    gcc libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
@@ -19,7 +19,7 @@ COPY htgen/requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir gunicorn google-cloud-storage
+    && pip install --no-cache-dir gunicorn
 
 # Copy application code
 COPY htgen/ .
