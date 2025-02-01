@@ -83,5 +83,33 @@ There are two ways to run the application in production mode using Docker:
 
 The service account credentials file needs to be mounted into the container. Both Docker Compose and the Docker CLI command map your local credentials file into the container at `/app/credentials.json`.
 
+## Running as a Systemd Service
+
+You can run the application as a systemd service to ensure it starts automatically on boot and is managed by the system.
+
+1. Copy the service file to systemd directory:
+   ```bash
+   sudo cp htgen@.service /etc/systemd/system/
+   ```
+
+2. Edit the service file to set your paths and user:
+   ```bash
+   sudo nano /etc/systemd/system/htgen@.service
+   ```
+   Update the following:
+   - Replace `WorkingDirectory=/home/plox/htgen/` with your project directory path
+   - Update the `GOOGLE_CREDENTIALS_PATH` in ExecStart to point to your credentials file
+
+3. Reload systemd to recognize the new service:
+   ```bash
+   sudo systemctl daemon-reload
+   ```
+
+4. Enable and start the service (replace `yourusername` with your system username):
+   ```bash
+   sudo systemctl enable htgen@yourusername
+   sudo systemctl start htgen@yourusername
+   ```
+
 ---
 Google Cloud credits are provided for this project. #VertexAISprint
