@@ -145,6 +145,15 @@
                 document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
                 const sectionId = item.getAttribute('data-section');
                 document.getElementById(sectionId).classList.add('active');
+
+                // Update URL based on section
+                const url = new URL(window.location);
+                if (sectionId === 'homeSection') {
+                    url.searchParams.delete('section');
+                } else if (sectionId === 'historySection') {
+                    url.searchParams.set('section', 'history');
+                }
+                history.pushState({}, '', url);
             });
         });
 
@@ -242,6 +251,7 @@
                 </div>
             `;
             result.style.display = 'block';
+            result.className = ''; // Reset class - remove error/success
 
             // Scroll to the result
             result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -283,6 +293,12 @@
                     const formattedDate = date.toLocaleString();
                     return `
                     <div class="history-entry">
+                        <button class="remove-history" onclick="deleteHistoryEntry(${entry.timestamp})">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
                         <img src="${entry.image}" class="history-thumbnail">
                         <div class="entry-meta">
                             <div class="meta-info">
@@ -322,12 +338,30 @@
         document.addEventListener('DOMContentLoaded', () => {
             const history = getFromStorage();
             showHistory(history);
+
+            // Check URL parameters for section=history
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('section') === 'history') {
+                // Show history section
+                document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+                document.getElementById('historySection').classList.add('active');
+
+                // Update menu items
+                document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+                document.querySelector('.menu-item[data-section="historySection"]').classList.add('active');
+            }
         });
+
+        // Delete history entry
+        function deleteHistoryEntry(timestamp) {
+            const history = deleteFromStorage(timestamp);
+            showHistory(history);
+        }
 
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register("{{url_for('static', filename='js/sw.js')}}")
+                navigator.serviceWorker.register("/sw.js")
                     .then(registration => {
                         console.log('ServiceWorker registration successful with scope: ', registration.scope);
                     })

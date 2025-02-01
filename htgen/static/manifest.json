@@ -27,48 +27,56 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "/static/icons/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/static/icons/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ],
-  "screenshots": [],
+  "screenshots": [
+    {
+      "src": "/static/screenshots/darkmode-1004x920.png",
+      "type": "image/png",
+      "sizes": "1004x920",
+      "form_factor": "wide"
+    },
+    {
+        "src": "/static/screenshots/lightmode-1004x920.png",
+        "type": "image/png",
+        "sizes": "1004x920",
+        "form_factor": "wide"
+    },
+      {
+        "src": "/static/screenshots/lightmode-340x760.png",
+        "type": "image/png",
+        "sizes": "340x760",
+        "form_factor": "narrow"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Generate Hashtags",
       "short_name": "Generate",
       "description": "Generate new hashtags from an image",
-      "url": "/"
+      "url": "/",
+      "icons": [
+        {
+          "src": "/static/icons/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
     },
     {
       "name": "View History",
       "short_name": "History",
       "description": "View your previously generated hashtags",
-      "url": "/?section=history"
-    }
-  ],
-  "share_target": {
-    "action": "/",
-    "method": "GET",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url",
-      "files": [
+      "url": "/?section=history",
+      "icons": [
         {
-          "name": "image",
-          "accept": ["image/*"]
+          "src": "/static/icons/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png",
+          "purpose": "any"
         }
       ]
     }
-  }
+  ]
 }

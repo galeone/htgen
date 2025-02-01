@@ -1,8 +1,10 @@
 const CACHE_NAME = 'htgen-v1';
 const STATIC_CACHE = [
     '/',
+    '/static/manifest.json',
     '/static/css/style.css',
     '/static/js/localstorage.js',
+    '/static/icons/icon-96x96.png',
     '/static/icons/icon-144x144.png',
     '/static/icons/icon-192x192.png',
     '/static/icons/icon-512x512.png'
@@ -39,6 +41,7 @@ self.addEventListener('activate', event => {
 
 // Fetch Event Handler
 self.addEventListener('fetch', event => {
+    console.log('[Service Worker] Fetching:', event.request.url);
     // Skip cross-origin requests
     if (!event.request.url.startsWith(self.location.origin)) {
         return;

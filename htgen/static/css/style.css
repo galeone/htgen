@@ -197,6 +197,7 @@ body {
     font-size: 1em;
     transition: var(--transition);
     background-color: var(--gray-100);
+    box-sizing: border-box;
 }
 
 .form-select:hover,
@@ -433,6 +434,38 @@ body {
     margin-bottom: 24px;
     box-shadow: var(--shadow-md);
     transition: var(--transition);
+    position: relative;
+}
+
+.remove-history {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    z-index: 1;
+}
+
+.remove-history:hover {
+    background: white;
+    transform: scale(1.1);
+    box-shadow: var(--shadow-md);
+}
+
+.remove-history svg {
+    width: 20px;
+    height: 20px;
+    color: var(--error);
 }
 
 .history-entry:hover {
@@ -591,5 +624,13 @@ input[type="file"] {
 
     .bottom-menu {
         background: rgba(52, 58, 64, 0.8);
+    }
+
+    .remove-history {
+        background: rgba(52, 58, 64, 0.9);
+    }
+
+    .remove-history:hover {
+        background: var(--gray-800);
     }
 }

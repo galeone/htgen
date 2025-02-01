@@ -114,5 +114,15 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/sw.js")
+def sw():
+    """
+    Serve the service worker script.
+    It needs to be served from the root directory to work properly.
+    Ref: https://stackoverflow.com/a/48792264/2891324
+    """
+    return app.send_static_file("js/sw.js")
+
+
 if __name__ == "__main__":
     app.run(debug=True)

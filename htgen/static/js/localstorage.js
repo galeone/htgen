@@ -28,3 +28,10 @@ function saveToStorage(imageData, hashtags, language, topic) {
 function getFromStorage() {
     return JSON.parse(localStorage.getItem('htgenHistory') || '[]').reverse();
 }
+
+function deleteFromStorage(timestamp) {
+    let history = JSON.parse(localStorage.getItem('htgenHistory') || '[]');
+    history = history.filter(entry => entry.timestamp !== timestamp);
+    localStorage.setItem('htgenHistory', JSON.stringify(history));
+    return history.reverse();
+}
