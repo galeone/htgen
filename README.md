@@ -6,4 +6,4 @@ The LLM is capable of combining multimodal information.
 The UI/UX of this PWA has been AI-Generated.
 
 ---
-Google Cloud credits are provided for this project. #VertexAISprint 
+Google Cloud credits are provided for this project. #VertexAISprint

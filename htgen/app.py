@@ -75,7 +75,7 @@ def generate_hashtags():
         return jsonify({"error": "No file part"}), 400
     if "language" not in request.form:
         return jsonify({"error": "No language selected"}), 400
-    
+
     file = request.files["file"]
     language = request.form["language"]
 

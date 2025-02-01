@@ -6,11 +6,11 @@ function saveToStorage(imageData, hashtags, language, topic) {
         language: language,
         topic: topic || null
     };
-    
+
     // Get existing entries or initialize array
     const history = JSON.parse(localStorage.getItem('htgenHistory') || '[]');
     history.push(entry);
-    
+
     // Save updated array
     localStorage.setItem('htgenHistory', JSON.stringify(history));
 }
