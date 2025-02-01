@@ -1,0 +1,72 @@
+# Hashtag Generator - AI-Powered PWA
+
+A Progressive Web Application (PWA) that uses Google Cloud's Vertex AI with Gemini Flash to analyze images and generate relevant hashtags. The application combines multimodal AI capabilities to understand image content and generate appropriate hashtags, making it easier to tag and categorize images for social media.
+
+## Features
+
+- Image analysis using Vertex AI's Gemini Flash
+- Progressive Web App (PWA) for native-like experience
+- Google Cloud Storage integration for image storage
+- AI-Generated UI/UX design
+- Support for multiple image formats (PNG, JPG, JPEG, GIF, WEBP)
+
+## Local Development
+
+To run the application locally, follow these steps:
+
+1. Create the virtual environment and install the dependencies:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+2. Create the `.env.dev` file with the following environment variables:
+   ```bash
+   GOOGLE_CLOUD_PROJECT="your-project-id"
+   BUCKET_NAME="your-bucket-name"
+   ```
+   Of course, replace `your-project-id` and `your-bucket-name` with your actual Google Cloud project ID and bucket name.
+3. Run it using the following command:
+   ```bash
+   python app.py
+   ```
+
+If you use vscode the `launch.json` file is already configured to run the application.
+
+## Running with Docker - Production Mode
+
+To run the application using Docker (the server will be deployed in production mode, using `gunicorn`), follow these steps:
+
+1. First, ensure you have your Google Cloud credentials JSON file ready. You'll need to mount this file into the container.
+2. Export the following environment variables:
+   ```bash
+   export GOOGLE_CLOUD_PROJECT="your-project-id"
+   export BUCKET_NAME="your-bucket-name"
+   ```
+3. Build the Docker image with the following command:
+   ```bash
+   docker build -t htgen .
+   ```
+4. Run the Docker container with the following command:
+   ```bash
+   docker run -p 8000:8000 \
+     -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT \
+     -e BUCKET_NAME=$BUCKET_NAME \
+     -e GOOGLE_APPLICATION_CREDENTIALS="/app/credentials.json" \
+     -v /path/to/your/credentials.json:/app/credentials.json \
+     htgen
+   ```
+    Replace `/path/to/your/credentials.json` with the path to your Google Cloud credentials JSON file.
+
+### Environment Variables
+
+- `GOOGLE_CLOUD_PROJECT`: Your Google Cloud project ID
+- `BUCKET_NAME`: The Google Cloud Storage bucket name for storing images
+- `GOOGLE_APPLICATION_CREDENTIALS`: Path to the credentials file inside the container (should be inside /app, so "/app/credentials.json" is the default value)
+
+### Volume Mount
+
+The service account credentials file needs to be mounted into the container. The `-v` flag maps your local credentials file into the container at `/app/credentials.json`.
+
+---
+Google Cloud credits are provided for this project. #VertexAISprint

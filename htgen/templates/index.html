@@ -2,14 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="Generate hashtags from images using AI">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#343a40" media="(prefers-color-scheme: dark)">
+    <meta name="description" content="Generate hashtags from your images using AI - Quick, easy, and accurate">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="HTGen">
-    <title>Image Hashtag Generator</title>
-    
+    <meta name="application-name" content="HTGen">
+    <meta name="format-detection" content="telephone=no">
+    <title>Hashtag AI</title>
+
     <!-- PWA Support -->
     <link rel="manifest" href="{{url_for('static', filename='manifest.json')}}">
     <link rel="icon" type="image/png" sizes="144x144" href="{{url_for('static', filename='icons/icon-144x144.png')}}">
@@ -23,88 +27,88 @@
 </head>
 <body>
     <div class="container">
-        <h1>Image Hashtag Generator</h1>
-        <form id="uploadForm">
-            <div class="input-group">
-                <label for="fileInput">Choose an image file:</label>
-                <input type="file" id="fileInput" name="file" accept="image/*" capture>
+        <div id="homeSection" class="section active">
+            <div class="header">
+                <h1>Welcome<br>to Hashtag AI</h1>
+                <img src="{{url_for('static', filename='icons/icon-144x144.png')}}" alt="Hashtag AI Logo" class="header-logo">
             </div>
-            <div class="input-group">
-                <button type="submit" class="button">Generate Hashtags</button>
-            </div>
-        </form>
-        <img id="preview" style="display: none;">
-        <div id="result" style="display: none;"></div>
+            <p class="info">Generate hashtags from images using AI</p>
+            <form id="uploadForm">
+                <div class="camera-input">
+                    <div id="cameraPlaceholder" class="camera-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                        <span>Take a photo or select from gallery</span>
+                    </div>
+                    <div id="imagePreview" class="image-preview" style="display: none;">
+                        <button type="button" class="remove-image" onclick="removeImage()">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                        <img id="preview">
+                    </div>
+                    <input type="file" id="fileInput" name="file" accept="image/*" capture>
+                </div>
+                <div class="input-group">
+                    <label for="languageSelect">Language for hashtags:</label>
+                    <select id="languageSelect" name="language" class="form-select">
+                        <option value="english">English</option>
+                        <option value="spanish">Spanish</option>
+                        <option value="french">French</option>
+                        <option value="german">German</option>
+                        <option value="italian">Italian</option>
+                        <option value="portuguese">Portuguese</option>
+                        <option value="dutch">Dutch</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="topicInput">Topic (optional):</label>
+                    <div class="input-hint">Add a specific topic to focus the hashtag generation (e.g., "running", "cooking")</div>
+                    <input type="text" id="topicInput" name="topic" class="form-input" placeholder="Enter a topic">
+                </div>
+                <div class="input-group">
+                    <div class="generate-container">
+                        <button type="submit" class="generate-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
+                            </svg>
+                            <span>Generate</span>
+                        </button>
+                        <div id="spinner" class="spinner"></div>
+                    </div>
+                </div>
+            </form>
+            <div id="result" style="display: none;"></div>
+        </div>
+
+        <div id="historySection" class="section">
+            <h2>Previous Generations</h2>
+            <!-- History content will be dynamically inserted here -->
+        </div>
     </div>
 
-    <script>
-        const form = document.getElementById('uploadForm');
-        const fileInput = document.getElementById('fileInput');
-        const preview = document.getElementById('preview');
-        const result = document.getElementById('result');
+    <!-- Bottom Menu -->
+    <div class="bottom-menu">
+        <div class="menu-item active" data-section="homeSection">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span>Home</span>
+        </div>
+        <div class="menu-item" data-section="historySection">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>History</span>
+        </div>
+    </div>
 
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData();
-            const file = fileInput.files[0];
-
-            if (!file) {
-                showResult('Please select an image file.', false);
-                return;
-            }
-
-            formData.append('file', file);
-
-            try {
-                const response = await fetch('/hashtags', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showResult('Generated Hashtags: ' + data.hashtags.join(' '), true);
-                } else {
-                    showResult('Error: ' + data.error, false);
-                }
-            } catch (error) {
-                showResult('Error: Could not connect to the server. Make sure the server is running.', false);
-            }
-        });
-
-        function showResult(message, isSuccess) {
-            result.textContent = message;
-            result.style.display = 'block';
-            result.className = isSuccess ? 'success' : 'error';
-        }
-    </script>
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register("{{url_for('static', filename='js/sw.js')}}")
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/localstorage.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sw-register.js') }}"></script>
 </body>
 </html>

@@ -1,6 +1,9 @@
 flask
 google-cloud-aiplatform
+google-cloud-storage
 python-dotenv
+python-magic
+exif
 
 pip-tools
 pylint
