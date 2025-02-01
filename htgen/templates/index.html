@@ -67,15 +67,17 @@
                     <input type="text" id="topicInput" name="topic" class="form-input" placeholder="Enter a topic">
                 </div>
                 <div class="input-group">
-                    <button type="submit" class="generate-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
-                        </svg>
-                        <span>Generate</span>
-                    </button>
+                    <div class="generate-container">
+                        <button type="submit" class="generate-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
+                            </svg>
+                            <span>Generate</span>
+                        </button>
+                        <div id="spinner" class="spinner"></div>
+                    </div>
                 </div>
             </form>
-            <div id="spinner" class="spinner"></div>
             <div id="result" style="display: none;"></div>
         </div>
 
@@ -178,7 +180,9 @@
                 return;
             }
 
-            // Show spinner and hide previous results
+            // Hide button text, show spinner, and hide previous results
+            const generateButton = form.querySelector('.generate-button');
+            generateButton.style.opacity = '0';
             spinner.style.display = 'block';
             result.style.display = 'none';
             formData.append('file', file);
@@ -212,7 +216,9 @@
             } catch (error) {
                 showResult('Error: Could not connect to the server. Make sure the server is running.', false);
             } finally {
+                // Hide spinner and show button
                 spinner.style.display = 'none';
+                generateButton.style.opacity = '1';
             }
         });
 
