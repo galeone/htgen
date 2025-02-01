@@ -106,7 +106,7 @@ function handleApiRequest(event) {
                         type: 'OFFLINE_STATE',
                         payload: {
                             isOffline: true,
-                            message: 'You are offline. Your last request will be processed when you are back online.'
+                            message: 'You are offline. Try again later.'
                         }
                     });
                 });

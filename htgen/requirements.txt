@@ -59,7 +59,9 @@ google-cloud-core==2.4.1
 google-cloud-resource-manager==1.14.0
     # via google-cloud-aiplatform
 google-cloud-storage==2.19.0
-    # via google-cloud-aiplatform
+    # via
+    #   -r requirements.in
+    #   google-cloud-aiplatform
 google-crc32c==1.6.0
     # via
     #   google-cloud-storage
@@ -150,6 +152,8 @@ pyproject-hooks==1.2.0
 python-dateutil==2.9.0.post0
     # via google-cloud-bigquery
 python-dotenv==1.0.1
+    # via -r requirements.in
+python-magic==0.4.27
     # via -r requirements.in
 requests==2.32.3
     # via

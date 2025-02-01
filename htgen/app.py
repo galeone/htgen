@@ -1,11 +1,13 @@
 """Main application file for the Hashtag Generator web app."""
 
-from pathlib import Path
 import logging
 import os
+from datetime import datetime
+from io import BytesIO
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, render_template
+from google.cloud import storage
 from werkzeug.utils import secure_filename
 from ai import init_vertex_ai, get_image_hashtags
 
@@ -23,18 +25,19 @@ logging.basicConfig(level=LEVEL)
 
 # Initialize Vertex AI
 GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
+BUCKET_NAME = os.getenv("BUCKET_NAME")
 if not GOOGLE_CLOUD_PROJECT:
     raise ValueError("GOOGLE_CLOUD_PROJECT environment variable is required")
+if not BUCKET_NAME:
+    raise ValueError("BUCKET_NAME environment variable is required")
+
 init_vertex_ai(GOOGLE_CLOUD_PROJECT)
 
-# Configure upload folder
-UPLOAD_FOLDER = "uploads"
+# Initialize Google Cloud Storage client
+storage_client = storage.Client()
+bucket = storage_client.bucket(BUCKET_NAME)
+
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
-
-# Create uploads directory if it doesn't exist
-
-Path(UPLOAD_FOLDER).mkdir(exist_ok=True)
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
 def allowed_file(filename):
@@ -91,15 +94,29 @@ def generate_hashtags():
         return jsonify({"error": "No selected file"}), 400
 
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = Path(app.config["UPLOAD_FOLDER"]) / filename
-        file.save(file_path)
-
         try:
+            # Create a unique filename with timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            original_filename = secure_filename(file.filename)
+            filename = f"{timestamp}_{original_filename}"
+
+            # Save file to memory first
+            file_content = file.read()
+            file_obj = BytesIO(file_content)
+
+            # Upload to Google Cloud Storage
+            blob = bucket.blob(filename)
+            blob.upload_from_file(file_obj, content_type=file.content_type)
+
+            # Create a temporary file for AI processing
+            temp_file = BytesIO(file_content)
+
             # Get hashtags from the image
-            hashtags = get_image_hashtags(file_path, language, topic)
+            hashtags = get_image_hashtags(temp_file, language, topic)
+
             return jsonify({"hashtags": hashtags})
         except Exception as e:
+            app.logger.error(f"Error processing image: {str(e)}")
             return jsonify({"error": f"Error analyzing image: {str(e)}"}), 500
 
     return jsonify({"error": "File type not allowed"}), 400

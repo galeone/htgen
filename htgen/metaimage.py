@@ -3,6 +3,7 @@ Module for extracting and processing EXIF metadata from images.
 Provides functionality to extract GPS coordinates and other metadata from image files.
 """
 
+from io import BytesIO
 from typing import Dict, Tuple, Union, Optional
 from pathlib import Path
 import time
@@ -98,7 +99,7 @@ def decimal_coords(coords: Tuple[float, float, float], ref: str) -> float:
 
 
 def image_coordinates(
-    image_path: Union[str, Path],
+    image_data: BytesIO,
 ) -> Dict[str, Optional[Union[str, float]]]:
     """
     Extract EXIF metadata including GPS coordinates and timestamp from an image.
@@ -123,18 +124,10 @@ def image_coordinates(
         FileNotFoundError: If image file doesn't exist
         ValueError: If file is not a valid image with EXIF data
     """
-    image_path = Path(image_path)
-    logger.info("Processing image: %s", image_path)
-
-    if not image_path.exists():
-        logger.error("Image file not found: %s", image_path)
-        raise FileNotFoundError(f"Image file not found: {image_path}")
-
     try:
-        with open(image_path, "rb") as src:
-            img = Image(src)
+        img = Image(image_data)
     except Exception as e:
-        logger.error("Failed to read image file %s: %s", image_path, str(e))
+        logger.error("Failed to read image file %s: %s", image_data, str(e))
         raise ValueError(f"Failed to read image file: {e}") from e
 
     result = {
