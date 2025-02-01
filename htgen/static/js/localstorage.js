@@ -11,8 +11,18 @@ function saveToStorage(imageData, hashtags, language, topic) {
     const history = JSON.parse(localStorage.getItem('htgenHistory') || '[]');
     history.push(entry);
 
-    // Save updated array
-    localStorage.setItem('htgenHistory', JSON.stringify(history));
+    // Save updated array. Localstorage is limited in space, so we try to set the item
+    // and if an exception is thrown, we pop the first element and try again.
+    let attempts = 0;
+    while (attempts < 3) {
+        try {
+            localStorage.setItem('htgenHistory', JSON.stringify(history));
+            return;
+        } catch (e) {
+            history.shift();
+            attempts++;
+        }
+    }
 }
 
 function getFromStorage() {

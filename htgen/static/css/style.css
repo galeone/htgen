@@ -1,14 +1,127 @@
-body {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
-    background-color: #f5f5f5;
+/* Add styles for copy button */
+.copy-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
+.copy-button:hover {
+    background: #0056b3;
+}
+
+.copy-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.copy-button .check {
+    display: none;
+}
+
+.copy-button.copied .check {
+    display: block;
+}
+
+.copy-button.copied svg:not(.check) {
+    display: none;
+}
+
+.copy-button.copied {
+    background-color: #218838;
+}
+
+/* Rest of your existing styles */
 .container {
-    background-color: white;
-    padding: 0 10px 10px 10px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: calc(100vh - 60px);
+    padding-bottom: 80px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 2em;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.header-logo {
+    width: 48px;
+    height: 48px;
+}
+
+.info {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.camera-input {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.camera-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #ccc;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 40px 20px;
+    cursor: pointer;
+    text-align: center;
+    color: #666;
+}
+
+.camera-label svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 10px;
+}
+
+.image-preview {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.image-preview img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.remove-image {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.remove-image svg {
+    width: 20px;
+    height: 20px;
 }
 
 .input-group {
@@ -17,147 +130,50 @@ body {
 
 .input-group label {
     display: block;
-    margin-bottom: 10px;
-    font-weight: 500;
+    margin-bottom: 5px;
+    color: #333;
 }
 
 .input-hint {
-    font-size: 12px;
-    color: #6c757d;
-    margin-bottom: 8px;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
 }
 
-.form-select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    background-color: white;
-    font-size: 14px;
-    color: #495057;
-    cursor: pointer;
-    box-sizing: border-box;
-}
-
-.form-select:focus {
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-}
-
+.form-select,
 .form-input {
     width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ced4da;
+    padding: 8px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 14px;
-    color: #495057;
-    box-sizing: border-box;
+    font-size: 1em;
 }
 
-.form-input:focus {
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-}
-
-.form-input::placeholder {
-    color: #6c757d;
-    opacity: 0.8;
-}
-
-/* Camera input styling */
-.camera-input {
-    text-align: center;
-    margin: 40px 0;
-}
-
-.camera-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 40px 20px;
-    border: 2px dashed #ced4da;
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin: 0 auto;
-    max-width: 400px;
-    min-height: 200px;
-}
-
-.camera-label:hover {
-    border-color: #007bff;
-    background-color: #f8f9fa;
-    transform: translateY(-2px);
-}
-
-.camera-label svg {
-    width: 64px;
-    height: 64px;
-    color: #6c757d;
-    transition: all 0.2s ease;
-}
-
-.camera-label:hover svg {
-    color: #007bff;
-}
-
-.camera-label span {
-    color: #6c757d;
-    font-size: 14px;
-}
-
-.camera-input input[type=file] {
-    display: none;
-}
-
-.image-preview {
-    position: relative;
-    margin: 0 auto;
-    max-width: 400px;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 2px solid #ced4da;
-}
-
-.image-preview img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.remove-image {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    cursor: pointer;
+.generate-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.remove-image:hover {
-    background: #fff;
-    transform: scale(1.1);
+.generate-button:hover {
+    background: #0056b3;
 }
 
-.remove-image svg {
-    width: 20px;
-    height: 20px;
-    color: #dc3545;
+.generate-button svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
 }
 
-/* Loading spinner */
 .spinner {
     display: none;
     width: 40px;
@@ -174,151 +190,57 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Copy button */
-.copy-button {
-    background-color: #28a745;
-    color: white;
-    padding: 8px 16px;
-    border: none;
+.success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
     border-radius: 4px;
-    cursor: pointer;
-    margin-left: 10px;
 }
 
-.copy-button:hover {
-    background-color: #218838;
+.error {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    color: #721c24;
 }
 
 .hashtags-container {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
-    margin-top: 20px;
+    background-color: #f8f9fa;
     padding: 15px;
     border-radius: 4px;
 }
 
 .hashtags-text {
-    flex-grow: 1;
-    word-break: break-all;
+    flex: 1;
+    word-break: break-word;
 }
 
-.entry-meta {
-    margin-bottom: 12px;
-}
-
-.timestamp {
-    font-size: 12px;
-    color: #6c757d;
-    margin-bottom: 4px;
-    font-style: italic;
-}
-
-.meta-info {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.language-tag, .topic-tag {
-    font-size: 12px;
-    padding: 2px 8px;
-    border-radius: 12px;
-    background-color: #e9ecef;
-    color: #495057;
-}
-
-.language-tag {
-    background-color: #cce5ff;
-    color: #004085;
-}
-
-.topic-tag {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.generate-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #007bff, #00bfff);
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
-    margin-top: 20px;
-}
-
-.generate-button svg {
-    width: 24px;
-    height: 24px;
-}
-
-.generate-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
-    background: linear-gradient(135deg, #0056b3, #0098cc);
-}
-
-.generate-button:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.2);
-}
-
-#preview, .history-thumbnail {
-    max-width: 100%;
-    margin-top: 20px;
-}
-
-#result {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 4px;
-}
-
-.success {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.error {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-/* Bottom Menu Styles */
+/* Bottom Menu */
 .bottom-menu {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: white;
+    background: white;
     display: flex;
     justify-content: space-around;
     padding: 10px;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .menu-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-decoration: none;
-    color: #6c757d;
+    padding: 5px 20px;
+    color: #666;
     cursor: pointer;
-    padding: 0px 20px;
-}
-
-.menu-item.active {
-    color: #007bff;
+    transition: color 0.3s;
 }
 
 .menu-item svg {
@@ -328,15 +250,14 @@ body {
 }
 
 .menu-item span {
-    font-size: 12px;
+    font-size: 0.8em;
 }
 
-/* Adjust container padding for menu */
-.container {
-    margin-bottom: 70px;
+.menu-item.active {
+    color: #007bff;
 }
 
-/* Section visibility */
+/* History Section */
 .section {
     display: none;
 }
@@ -345,49 +266,58 @@ body {
     display: block;
 }
 
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.history-entry {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
     margin-bottom: 20px;
-    padding: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.header h1 {
-    margin: 0;
-    font-size: 32px;
-    line-height: 1.2;
+.history-thumbnail {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
 }
 
-.header-logo {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    margin-left: 30px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    transition: transform 0.2s ease;
-    cursor: pointer;
+.entry-meta {
+    margin-bottom: 10px;
 }
 
-.header-logo:hover {
-    transform: scale(1.05);
+.meta-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
-.info {
-    color: #6c757d;
-    font-size: 12px;
+.timestamp {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.language-tag,
+.topic-tag {
+    background: #e9ecef;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    color: #495057;
 }
 
 .empty-history {
     text-align: center;
+    color: #666;
     padding: 40px 20px;
-    color: #6c757d;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    margin: 20px 0;
 }
 
 .empty-history p {
     margin: 10px 0;
-    font-size: 14px;
+}
+
+/* Hide file input */
+input[type="file"] {
+    display: none;
 }

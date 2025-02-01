@@ -10,18 +10,7 @@ import logging
 import requests
 from exif import Image
 
-# Configure logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-# Create console handler with a more detailed formatter
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
-)
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
 
 
 def get_location_from_coordinates(lat: float, lng: float) -> Dict[str, Optional[str]]:
@@ -212,7 +201,7 @@ def image_coordinates(
                 logger.info("Could not determine precise location from coordinates")
 
         except (AttributeError, TypeError, ValueError) as e:
-            logger.error("Failed to process GPS coordinates: %s", str(e))
+            logger.warning("Failed to process GPS coordinates: %s", str(e))
     else:
         logger.info("No GPS coordinates found in EXIF data")
 

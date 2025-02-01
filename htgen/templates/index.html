@@ -52,13 +52,13 @@
                 <div class="input-group">
                     <label for="languageSelect">Language for hashtags:</label>
                     <select id="languageSelect" name="language" class="form-select">
-                        <option value="en">English</option>
-                        <option value="es">Spanish</option>
-                        <option value="fr">French</option>
-                        <option value="de">German</option>
-                        <option value="it">Italian</option>
-                        <option value="pt">Portuguese</option>
-                        <option value="nl">Dutch</option>
+                        <option value="english">English</option>
+                        <option value="spanish">Spanish</option>
+                        <option value="french">French</option>
+                        <option value="german">German</option>
+                        <option value="italian">Italian</option>
+                        <option value="portuguese">Portuguese</option>
+                        <option value="dutch">Dutch</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -110,18 +110,8 @@
         const languageSelect = document.getElementById('languageSelect');
         const topicInput = document.getElementById('topicInput');
 
-        // Helper function to get full language name from code
-        function getLangName(code) {
-            const languages = {
-                'en': 'English',
-                'es': 'Spanish',
-                'fr': 'French',
-                'de': 'German',
-                'it': 'Italian',
-                'pt': 'Portuguese',
-                'nl': 'Dutch'
-            };
-            return languages[code] || code;
+        function capitalizeFirstLetter(val) {
+            return String(val).charAt(0).toUpperCase() + String(val).slice(1);
         }
 
         // Set default language based on browser language
@@ -228,9 +218,17 @@
 
         function showHashtagsWithCopy(hashtags) {
             result.innerHTML = `
-                <div class="hashtags-container">
+                <div class="hashtags-container success" style="margin-top: 20px;">
                     <div class="hashtags-text">${hashtags}</div>
-                    <button class="copy-button" onclick="copyHashtags(this)">Copy</button>
+                    <button class="copy-button" onclick="copyHashtags(this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <svg class="check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
                 </div>
             `;
             result.style.display = 'block';
@@ -243,12 +241,9 @@
         function copyHashtags(button) {
             const hashtagsText = button.parentElement.querySelector('.hashtags-text').textContent;
             navigator.clipboard.writeText(hashtagsText).then(() => {
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.style.backgroundColor = '#218838';
+                button.classList.add('copied');
                 setTimeout(() => {
-                    button.textContent = originalText;
-                    button.style.backgroundColor = '';
+                    button.classList.remove('copied');
                 }, 2000);
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
@@ -283,13 +278,21 @@
                         <div class="entry-meta">
                             <div class="meta-info">
                                 <span class="timestamp">${formattedDate}</span>
-                                <span class="language-tag">${getLangName(entry.language)}</span>
+                                <span class="language-tag">${capitalizeFirstLetter(entry.language)}</span>
                                 ${entry.topic ? `<span class="topic-tag">Topic: ${entry.topic}</span>` : ''}
                             </div>
                         </div>
                         <div class="hashtags-container success">
                             <div class="hashtags-text">${entry.hashtags.join(' ')}</div>
-                            <button class="copy-button" onclick="copyHashtags(this)">Copy</button>
+                            <button class="copy-button" onclick="copyHashtags(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <svg class="check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                     `;
