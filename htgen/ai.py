@@ -1,3 +1,5 @@
+"""Module for interacting with Vertex AI services for image analysis."""
+
 import logging
 from pathlib import Path
 from typing import Optional

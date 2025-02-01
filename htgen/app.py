@@ -1,3 +1,5 @@
+"""Main application file for the Hashtag Generator web app."""
+
 from pathlib import Path
 import logging
 import os
