@@ -95,19 +95,21 @@ function handleApiRequest(event) {
     let request = event.request.clone();
     return fetch(event.request)
         .then(response => response)
-        .catch(error => {
+        .catch(async error => {
             // If offline, store the request for later
             // navigator.onLine is not reliable, so we check if the fetch failed
             if (!navigator.onLine || error.message.toLowerCase().includes('failed to fetch')) {
-                return saveRequestForLater(request)
-                    .then(() => {
-                        let response = new Response(JSON.stringify({
-                            error: 'You are offline. Your request will be processed when you are back online.'
-                        }), {
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                        return response;
+                // Notify all clients about offline state
+                const clients = await self.clients.matchAll();
+                clients.forEach(client => {
+                    client.postMessage({
+                        type: 'OFFLINE_STATE',
+                        payload: {
+                            isOffline: true,
+                            message: 'You are offline. Your last request will be processed when you are back online.'
+                        }
                     });
+                });
             }
             throw error;
         });
@@ -115,8 +117,18 @@ function handleApiRequest(event) {
 
 navigator.connection.onchange = async (event) => {
   if (navigator.onLine) {
-    await processPendingRequest();
-  }
+    // Notify all clients we're back online
+    const clients = await self.clients.matchAll();
+    clients.forEach(client => {
+        client.postMessage({
+                type: 'OFFLINE_STATE',
+                payload: {
+                    isOffline: false,
+                    message: 'You are back online!'
+                }
+            });
+        });
+    }
 };
 
 
@@ -134,74 +146,8 @@ function openDB() {
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
             if (!db.objectStoreNames.contains(storeName)) {
-                db.createObjectStore(storeName, { autoIncrement: true });
+                db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
             }
         };
-    });
-}
-
-async function saveRequestForLater(request) {
-    const db = await openDB();
-    const serializedRequest = await serializeRequest(request);
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    return store.put(serializedRequest);
-}
-
-// Process pending request - only the last one
-async function processPendingRequest() {
-    const db = await openDB();
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const requests = await store.getAll(); // should be 1
-    requests.onsuccess = function() {
-        const processPromises = requests.result.map(async (serializedRequest) => {
-            try {
-                const request = deserializeRequest(serializedRequest);
-                await fetch(request);
-                // Remove processed request
-                const db = await openDB();
-                const tx = db.transaction(storeName, 'readwrite');
-                const store = tx.objectStore(storeName);
-                await store.delete(serializedRequest.id);
-            } catch (error) {
-                console.error('Failed to process pending request:', error);
-            }
-        });
-
-        return Promise.all(processPromises);
-    };
-}
-
-// Helper functions to serialize/deserialize requests
-async function serializeRequest(request) {
-    const serialized = {
-        url: request.url,
-        method: request.method,
-        headers: Array.from(request.headers.entries()),
-        mode: request.mode,
-        credentials: request.credentials,
-        cache: request.cache,
-        redirect: request.redirect,
-        referrer: request.referrer
-    };
-
-    if (request.method !== 'GET') {
-        serialized.body = await request.clone().text();
-    }
-
-    return serialized;
-}
-
-function deserializeRequest(serialized) {
-    return new Request(serialized.url, {
-        method: serialized.method,
-        headers: serialized.headers,
-        mode: serialized.mode,
-        credentials: serialized.credentials,
-        cache: serialized.cache,
-        redirect: serialized.redirect,
-        referrer: serialized.referrer,
-        body: serialized.body
     });
 }

@@ -205,14 +205,11 @@
             }
 
             try {
-                // This request pass trough the Service Worker
-                // so the response is always OK, we need to check the response data
                 const response = await fetch('/hashtags', {
                     method: 'POST',
                     body: formData
                 });
                 const data = await response.json();
-
                 if (!data.error) {
                     const hashtags = data.hashtags.join(' ');
                     showHashtagsWithCopy(hashtags);
@@ -228,7 +225,8 @@
                     showResult('Error: ' + data.error, false);
                 }
             } catch (error) {
-                showResult('Error: Could not connect to the server. Make sure the server is running.', false);
+                // If here we are offline and the 'message' event has been triggered to show the offline message
+                console.log('Error:', error);
             } finally {
                 // Hide spinner and show button
                 spinner.style.display = 'none';
@@ -359,7 +357,7 @@
             showHistory(history);
         }
 
-        // Service Worker Registration
+        // Service Worker Registration and Message Handling
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register("/sw.js")
@@ -369,6 +367,31 @@
                     .catch(err => {
                         console.log('ServiceWorker registration failed: ', err);
                     });
+
+                // Listen for messages from the service worker
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data.type === 'OFFLINE_STATE') {
+                        const { isOffline, message } = event.data.payload;
+                        const generateButton = document.querySelector('.generate-button');
+
+                        if (isOffline) {
+                            // Disable generate button and show offline message
+                            generateButton.disabled = true;
+                            generateButton.style.opacity = '0.5';
+                            showResult(message, false);
+                        } else {
+                            // Re-enable generate button and show online message
+                            generateButton.disabled = false;
+                            generateButton.style.opacity = '1';
+                            showResult(message, true);
+
+                            // Clear the message after a delay
+                            setTimeout(() => {
+                                result.style.display = 'none';
+                            }, 3000);
+                        }
+                    }
+                });
             });
         }
     </script>
