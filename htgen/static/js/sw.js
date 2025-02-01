@@ -49,7 +49,7 @@ self.addEventListener('fetch', event => {
 
     // Handle API requests
     if (event.request.url.includes('/hashtags')) {
-        return handleApiRequest(event);
+        return event.respondWith(handleApiRequest(event));
     }
 
     // Handle static assets
@@ -90,30 +90,35 @@ self.addEventListener('fetch', event => {
 
 // Handle API Requests
 function handleApiRequest(event) {
+    // we need to clone the request because fetch consumes it
+    // and in the catch we can't call clone
+    let request = event.request.clone();
     return fetch(event.request)
         .then(response => response)
         .catch(error => {
             // If offline, store the request for later
-            if (!navigator.onLine) {
-                return saveRequestForLater(event.request.clone())
+            // navigator.onLine is not reliable, so we check if the fetch failed
+            if (!navigator.onLine || error.message.toLowerCase().includes('failed to fetch')) {
+                return saveRequestForLater(request)
                     .then(() => {
-                        return new Response(JSON.stringify({
+                        let response = new Response(JSON.stringify({
                             error: 'You are offline. Your request will be processed when you are back online.'
                         }), {
                             headers: { 'Content-Type': 'application/json' }
                         });
+                        return response;
                     });
             }
             throw error;
         });
 }
 
-// Background Sync
-self.addEventListener('sync', event => {
-    if (event.tag === 'process-pending-requests') {
-        event.waitUntil(processPendingRequests());
-    }
-});
+navigator.connection.onchange = async (event) => {
+  if (navigator.onLine) {
+    await processPendingRequest();
+  }
+};
+
 
 // Store pending requests in IndexedDB
 const dbName = 'HTGenOfflineDB';
@@ -140,27 +145,32 @@ async function saveRequestForLater(request) {
     const serializedRequest = await serializeRequest(request);
     const tx = db.transaction(storeName, 'readwrite');
     const store = tx.objectStore(storeName);
-    return store.add(serializedRequest);
+    return store.put(serializedRequest);
 }
 
-async function processPendingRequests() {
+// Process pending request - only the last one
+async function processPendingRequest() {
     const db = await openDB();
     const tx = db.transaction(storeName, 'readwrite');
     const store = tx.objectStore(storeName);
-    const requests = await store.getAll();
+    const requests = await store.getAll(); // should be 1
+    requests.onsuccess = function() {
+        const processPromises = requests.result.map(async (serializedRequest) => {
+            try {
+                const request = deserializeRequest(serializedRequest);
+                await fetch(request);
+                // Remove processed request
+                const db = await openDB();
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                await store.delete(serializedRequest.id);
+            } catch (error) {
+                console.error('Failed to process pending request:', error);
+            }
+        });
 
-    const processPromises = requests.map(async (serializedRequest) => {
-        try {
-            const request = await deserializeRequest(serializedRequest);
-            await fetch(request);
-            // Remove processed request
-            await store.delete(serializedRequest.id);
-        } catch (error) {
-            console.error('Failed to process pending request:', error);
-        }
-    });
-
-    return Promise.all(processPromises);
+        return Promise.all(processPromises);
+    };
 }
 
 // Helper functions to serialize/deserialize requests

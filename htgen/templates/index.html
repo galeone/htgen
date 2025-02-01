@@ -205,14 +205,15 @@
             }
 
             try {
+                // This request pass trough the Service Worker
+                // so the response is always OK, we need to check the response data
                 const response = await fetch('/hashtags', {
                     method: 'POST',
                     body: formData
                 });
-
                 const data = await response.json();
 
-                if (response.ok) {
+                if (!data.error) {
                     const hashtags = data.hashtags.join(' ');
                     showHashtagsWithCopy(hashtags);
                     // Save to localStorage after successful generation
