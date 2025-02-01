@@ -1,21 +1,74 @@
 {
-  "name": "HashTag Generator",
+  "name": "Hashtag AI Generator",
   "short_name": "HTGen",
-  "description": "Generate hashtags from images using AI",
+  "description": "Generate relevant hashtags from your images using AI - Quick, easy, and accurate",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "orientation": "portrait",
+  "background_color": "#f8f9fa",
+  "theme_color": "#007bff",
+  "prefer_related_applications": false,
+  "categories": ["utilities", "social", "productivity"],
   "icons": [
+    {
+      "src": "/static/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/static/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/static/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Generate Hashtags",
+      "short_name": "Generate",
+      "description": "Generate new hashtags from an image",
+      "url": "/"
+    },
+    {
+      "name": "View History",
+      "short_name": "History",
+      "description": "View your previously generated hashtags",
+      "url": "/?section=history"
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "image",
+          "accept": ["image/*"]
+        }
+      ]
+    }
+  }
 }
