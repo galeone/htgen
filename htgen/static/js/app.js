@@ -10,7 +10,16 @@ function capitalizeFirstLetter(val) {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 
-// Set default language based on browser language
+function showNotification(message, isError = false) {
+    const notificationContainer = document.getElementById('notificationContainer');
+    notificationContainer.style.backgroundColor = isError ? '#dc3545' : '#28a745';
+    notificationContainer.textContent = message;
+    notificationContainer.style.transform = 'translateX(0)';
+    setTimeout(() => {
+        notificationContainer.style.transform = 'translateX(150%)';
+    }, 3000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Get browser language (e.g., "en-US" -> "en")
     const browserLang = navigator.language.split('-')[0];
@@ -33,6 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update menu items
         document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
         document.querySelector('.menu-item[data-section="historySection"]').classList.add('active');
+    }
+
+    // Show initial connection status if offline
+    if (!navigator.onLine) {
+        showNotification('You are currently offline. Changes will be saved locally.', true);
     }
 });
 
@@ -72,9 +86,16 @@ document.getElementById('cameraPlaceholder').addEventListener('click', () => {
     fileInput.click();
 });
 
+const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "heic", "heif"];
+
 fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
+        if (!ALLOWED_EXTENSIONS.includes(file.name.split('.').pop().toLowerCase())) {
+            showNotification('Please select a valid image file.', true);
+            fileInput.value = '';
+            return;
+        }
         const reader = new FileReader();
         reader.onload = (e) => {
             document.getElementById('preview').src = e.target.result;
@@ -107,14 +128,26 @@ form.addEventListener('submit', async (e) => {
         topic: topicInput.value.trim()
     };
 
-    // Check if this is a duplicate submission
-    if (lastSubmission &&
-        lastSubmission.fileName === currentSubmission.fileName &&
-        lastSubmission.fileSize === currentSubmission.fileSize &&
-        lastSubmission.fileLastModified === currentSubmission.fileLastModified &&
-        lastSubmission.language === currentSubmission.language &&
-        lastSubmission.topic === currentSubmission.topic) {
-        showResult('This image has already been processed with the same parameters. The results are available in the history.', false);
+    // Get current image data
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    await new Promise((resolve, reject) => {
+        reader.onload = () => resolve();
+        reader.onerror = () => reject(reader.error);
+    });
+
+    // Check history for matching submission
+    const history = getFromStorage();
+    const matchingEntry = history.find(entry =>
+        entry.image === reader.result &&
+        entry.language === currentSubmission.language &&
+        // entry.topic can be stored as null or "" in case of no topic
+        (entry.topic === currentSubmission.topic || (!entry.topic && !currentSubmission.topic))
+    );
+
+    if (matchingEntry) {
+        showHashtagsWithCopy(matchingEntry.hashtags.join(' '));
         return;
     }
 
@@ -154,8 +187,7 @@ form.addEventListener('submit', async (e) => {
             showResult('Error: ' + data.error, false);
         }
     } catch (error) {
-        // If here we are offline and the 'message' event has been triggered to show the offline message
-        console.log('Error:', error);
+        showResult('Error: ' + data.error, false);
     } finally {
         // Hide spinner, show button and re-enable it
         spinner.style.display = 'none';

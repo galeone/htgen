@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-006NCF1362"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-006NCF1362');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)">
@@ -9,8 +18,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="HTGen">
-    <meta name="application-name" content="HTGen">
+    <meta name="apple-mobile-web-app-title" content="#HashTag AI">
+    <meta name="application-name" content="#HashTag AI">
     <meta name="format-detection" content="telephone=no">
     <title>Hashtag AI</title>
 
@@ -51,7 +60,7 @@
                         </button>
                         <img id="preview">
                     </div>
-                    <input type="file" id="fileInput" name="file" accept="image/*" capture>
+                    <input type="file" id="fileInput" name="file" accept="image/*;capture=camera">
                 </div>
                 <div class="input-group">
                     <label for="languageSelect">Language for hashtags:</label>
@@ -110,5 +119,6 @@
     <script src="{{ url_for('static', filename='js/localstorage.js') }}"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sw-register.js') }}"></script>
+    <div id="notificationContainer"></div>
 </body>
 </html>

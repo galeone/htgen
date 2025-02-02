@@ -278,6 +278,19 @@ body {
     100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
+#notificationContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    z-index: 1000;
+    transform: translateX(150%);
+    transition: transform 0.3s ease-in-out;
+}
+
 /* Results */
 #result {
     margin-bottom: 20px;

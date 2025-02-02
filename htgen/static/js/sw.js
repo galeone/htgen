@@ -96,9 +96,8 @@ function handleApiRequest(event) {
     return fetch(event.request)
         .then(response => response)
         .catch(async error => {
-            // If offline, store the request for later
-            // navigator.onLine is not reliable, so we check if the fetch failed
-            if (!navigator.onLine || error.message.toLowerCase().includes('failed to fetch')) {
+            // If fetch failed, assume we're offline
+            if (error.message.toLowerCase().includes('failed to fetch')) {
                 // Notify all clients about offline state
                 const clients = await self.clients.matchAll();
                 clients.forEach(client => {
@@ -115,39 +114,30 @@ function handleApiRequest(event) {
         });
 }
 
-navigator.connection.onchange = async (event) => {
-  if (navigator.onLine) {
-    // Notify all clients we're back online
+// Listen for online event
+self.addEventListener('online', async () => {
     const clients = await self.clients.matchAll();
     clients.forEach(client => {
         client.postMessage({
-                type: 'OFFLINE_STATE',
-                payload: {
-                    isOffline: false,
-                    message: 'You are back online!'
-                }
-            });
-        });
-    }
-};
-
-
-// Store pending requests in IndexedDB
-const dbName = 'HTGenOfflineDB';
-const storeName = 'pendingRequests';
-
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(dbName, 1);
-
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve(request.result);
-
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains(storeName)) {
-                db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+            type: 'OFFLINE_STATE',
+            payload: {
+                isOffline: false,
+                message: 'You are back online!'
             }
-        };
+        });
     });
-}
+});
+
+// Listen for offline event
+self.addEventListener('offline', async () => {
+    const clients = await self.clients.matchAll();
+    clients.forEach(client => {
+        client.postMessage({
+            type: 'OFFLINE_STATE',
+            payload: {
+                isOffline: true,
+                message: 'You are offline. Changes will be saved locally.'
+            }
+        });
+    });
+});

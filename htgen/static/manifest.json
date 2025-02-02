@@ -1,6 +1,6 @@
 {
   "name": "Hashtag AI Generator",
-  "short_name": "HTGen",
+  "short_name": "#Hashtag AI",
   "description": "Generate relevant hashtags from your images using AI - Quick, easy, and accurate",
   "start_url": "/",
   "display": "standalone",
