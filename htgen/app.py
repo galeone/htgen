@@ -37,7 +37,8 @@ init_vertex_ai(GOOGLE_CLOUD_PROJECT)
 storage_client = storage.Client()
 bucket = storage_client.bucket(BUCKET_NAME)
 
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+# Gemini's allowed file extensions
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "heic", "heif"}
 
 
 def allowed_file(filename):

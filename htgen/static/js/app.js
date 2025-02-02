@@ -86,9 +86,16 @@ document.getElementById('cameraPlaceholder').addEventListener('click', () => {
     fileInput.click();
 });
 
+const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "heic", "heif"];
+
 fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
+        if (!ALLOWED_EXTENSIONS.includes(file.name.split('.').pop().toLowerCase())) {
+            showNotification('Please select a valid image file.', true);
+            fileInput.value = '';
+            return;
+        }
         const reader = new FileReader();
         reader.onload = (e) => {
             document.getElementById('preview').src = e.target.result;
@@ -121,14 +128,26 @@ form.addEventListener('submit', async (e) => {
         topic: topicInput.value.trim()
     };
 
-    // Check if this is a duplicate submission
-    if (lastSubmission &&
-        lastSubmission.fileName === currentSubmission.fileName &&
-        lastSubmission.fileSize === currentSubmission.fileSize &&
-        lastSubmission.fileLastModified === currentSubmission.fileLastModified &&
-        lastSubmission.language === currentSubmission.language &&
-        lastSubmission.topic === currentSubmission.topic) {
-        showResult('This image has already been processed with the same parameters. The results are available in the history.', false);
+    // Get current image data
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    await new Promise((resolve, reject) => {
+        reader.onload = () => resolve();
+        reader.onerror = () => reject(reader.error);
+    });
+
+    // Check history for matching submission
+    const history = getFromStorage();
+    const matchingEntry = history.find(entry =>
+        entry.image === reader.result &&
+        entry.language === currentSubmission.language &&
+        // entry.topic can be stored as null or "" in case of no topic
+        (entry.topic === currentSubmission.topic || (!entry.topic && !currentSubmission.topic))
+    );
+
+    if (matchingEntry) {
+        showHashtagsWithCopy(matchingEntry.hashtags.join(' '));
         return;
     }
 
