@@ -10,7 +10,16 @@ function capitalizeFirstLetter(val) {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 
-// Set default language based on browser language
+function showNotification(message, isError = false) {
+    const notificationContainer = document.getElementById('notificationContainer');
+    notificationContainer.style.backgroundColor = isError ? '#dc3545' : '#28a745';
+    notificationContainer.textContent = message;
+    notificationContainer.style.transform = 'translateX(0)';
+    setTimeout(() => {
+        notificationContainer.style.transform = 'translateX(150%)';
+    }, 3000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Get browser language (e.g., "en-US" -> "en")
     const browserLang = navigator.language.split('-')[0];
@@ -33,6 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update menu items
         document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
         document.querySelector('.menu-item[data-section="historySection"]').classList.add('active');
+    }
+
+    // Show initial connection status if offline
+    if (!navigator.onLine) {
+        showNotification('You are currently offline. Changes will be saved locally.', true);
     }
 });
 
@@ -154,8 +168,7 @@ form.addEventListener('submit', async (e) => {
             showResult('Error: ' + data.error, false);
         }
     } catch (error) {
-        // If here we are offline and the 'message' event has been triggered to show the offline message
-        console.log('Error:', error);
+        showResult('Error: ' + data.error, false);
     } finally {
         // Hide spinner, show button and re-enable it
         spinner.style.display = 'none';

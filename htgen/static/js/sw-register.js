@@ -8,30 +8,22 @@ if ('serviceWorker' in navigator) {
             .catch(err => {
                 console.log('ServiceWorker registration failed: ', err);
             });
+    });
 
-        // Listen for messages from the service worker
-        navigator.serviceWorker.addEventListener('message', event => {
-            if (event.data.type === 'OFFLINE_STATE') {
-                const { isOffline, message } = event.data.payload;
-                const generateButton = document.querySelector('.generate-button');
+    // Handle online/offline events
+    window.addEventListener('online', () => {
+        showNotification('You are back online!');
+        const generateButton = document.querySelector('.generate-button');
+        // Re-enable generate button and show online message
+        generateButton.disabled = false;
+        generateButton.style.opacity = '1';
+    });
 
-                if (isOffline) {
-                    // Disable generate button and show offline message
-                    generateButton.disabled = true;
-                    generateButton.style.opacity = '0.5';
-                    showResult(message, false);
-                } else {
-                    // Re-enable generate button and show online message
-                    generateButton.disabled = false;
-                    generateButton.style.opacity = '1';
-                    showResult(message, true);
-
-                    // Clear the message after a delay
-                    setTimeout(() => {
-                        result.style.display = 'none';
-                    }, 3000);
-                }
-            }
-        });
+    window.addEventListener('offline', () => {
+        showNotification('You are offline. Changes will be saved locally.', true);
+        const generateButton = document.querySelector('.generate-button');
+        // Disable generate button and show offline message
+        generateButton.disabled = true;
+        generateButton.style.opacity = '0.5';
     });
 }
