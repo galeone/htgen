@@ -190,7 +190,7 @@ form.addEventListener('submit', async (e) => {
             showResult('Error: ' + data.error, false);
         }
     } catch (error) {
-        showResult('Error: ' + data.error, false);
+        showResult('Error: ' + error, false);
     } finally {
         // Hide spinner, show button and re-enable it
         spinner.style.display = 'none';

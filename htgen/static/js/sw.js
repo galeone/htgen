@@ -49,6 +49,22 @@ self.addEventListener('fetch', event => {
         return;
     }
 
+    // Handle XHR requests for hashtags
+    if (event.request.url.includes('/hashtags')) {
+        return event.respondWith(
+             fetch(event.request)
+            .then(response => response)
+            .catch(async error => {
+                // We should never reach this point
+                // since when offline we disable the generate button
+                console.error('/hashtags request failed:', error);
+                throw error;
+            })
+
+        );
+    }
+
+
     // Handle static assets with stale-while-revalidate strategy
     event.respondWith(
         caches.match(event.request)
