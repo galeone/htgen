@@ -1,4 +1,4 @@
-const CACHE_NAME = 'htgen-v1';
+const CACHE_NAME = 'htgen-{{APP_VERSION}}';
 const STATIC_CACHE = [
     '/',
     '/static/manifest.json',

@@ -23,6 +23,9 @@ else:
 app.logger.setLevel(LEVEL)
 logging.basicConfig(level=LEVEL)
 
+# Get App Version from environment
+APP_VERSION = os.getenv("APP_VERSION", "1")
+
 # Initialize Vertex AI
 GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
 BUCKET_NAME = os.getenv("BUCKET_NAME")
@@ -149,7 +152,14 @@ def sw():
     It needs to be served from the root directory to work properly.
     Ref: https://stackoverflow.com/a/48792264/2891324
     """
-    return app.send_static_file("js/sw.js")
+
+    with open(
+        os.path.join(app.static_folder, "js", "sw.js"), "r", encoding="utf-8"
+    ) as f:
+        content = f.read()
+        content = content.replace("{{APP_VERSION}}", APP_VERSION)
+        return content, 200, {"Content-Type": "text/javascript"}
+    return "", 404
 
 
 if __name__ == "__main__":
