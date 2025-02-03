@@ -4,7 +4,13 @@ from io import BytesIO
 import logging
 from typing import Optional
 from google.cloud import aiplatform
-from vertexai.preview.generative_models import GenerativeModel, Part
+from vertexai.preview.generative_models import (
+    GenerativeModel,
+    Part,
+    HarmCategory,
+    HarmBlockThreshold,
+    SafetySetting,
+)
 
 import magic
 
@@ -80,7 +86,39 @@ def get_image_hashtags(
     ]
 
     # Generate response
-    response = model.generate_content(prompt)
+    # Try to reduce all the safety settings to the minimum so we can avoid being blocked by the model
+    # https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters
+    safety_config = [
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_UNSPECIFIED,
+            threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        ),
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+            threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        ),
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+            threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        ),
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_HARASSMENT,
+            threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        ),
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+            threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        ),
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
+            threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        ),
+    ]
+
+    response = model.generate_content(
+        prompt,
+        safety_settings=safety_config,
+    )
 
     # Process response to extract hashtags
     hashtags_text = response.text.strip()
