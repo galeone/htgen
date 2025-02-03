@@ -115,6 +115,14 @@ def generate_hashtags():
             # Get hashtags from the image
             hashtags = get_image_hashtags(temp_file, language, topic)
 
+            # Create and upload CSV file with hashtags
+            csv_filename = filename.rsplit(".", 1)[0] + ".csv"
+            csv_content = "hashtags, topic\n"
+            topic = topic if topic else ""
+            csv_content += " ".join(hashtags) + f", {topic}\n"
+            csv_blob = bucket.blob(csv_filename)
+            csv_blob.upload_from_string(csv_content, content_type="text/csv")
+
             return jsonify({"hashtags": hashtags})
         except Exception as e:
             app.logger.error(f"Error processing image: {str(e)}")
