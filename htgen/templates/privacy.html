@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'partials/analytics.html' %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#343a40" media="(prefers-color-scheme: dark)">
+    <meta name="description" content="Privacy Policy for Hashtag AI - Learn how we handle your data">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="#HashTag AI">
+    <meta name="application-name" content="#HashTag AI">
+    <title>Privacy Policy - Hashtag AI</title>
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="{{url_for('static', filename='manifest.json')}}">
+    <link rel="icon" type="image/png" sizes="144x144" href="{{url_for('static', filename='icons/icon-144x144.png')}}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{url_for('static', filename='icons/icon-192x192.png')}}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{url_for('static', filename='icons/icon-512x512.png')}}">
+    <link rel="apple-touch-icon" type="image/png" sizes="144x144" href="{{url_for('static', filename='icons/icon-144x144.png')}}">
+    <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="{{url_for('static', filename='icons/icon-192x192.png')}}">
+    <link rel="apple-touch-icon" type="image/png" sizes="512x512" href="{{url_for('static', filename='icons/icon-512x512.png')}}">
+
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+</head>
+<body>
+    <div class="container">
+        <div class="section active">
+            <div class="header">
+                <h1>Privacy Policy</h1>
+                <img src="{{url_for('static', filename='icons/icon-144x144.png')}}" alt="Hashtag AI Logo" class="header-logo">
+            </div>
+
+            <div class="privacy-content">
+                <section>
+                    <h2>Last Updated: February 3, 2025</h2>
+                    <p>This Privacy Policy describes how Hashtag AI ("we," "our," or "us") collects, uses, and protects your information when you use our web application.</p>
+                </section>
+
+                <section>
+                    <h2>Information We Collect</h2>
+                    <p>When you use Hashtag AI, we collect:</p>
+                    <ul>
+                        <li>Images you upload for hashtag generation</li>
+                        <li>Selected language preferences</li>
+                        <li>Optional topic inputs</li>
+                        <li>Generated hashtags history (stored locally on your device)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>How We Use Your Information</h2>
+                    <p>We use your information to:</p>
+                    <ul>
+                        <li>Generate relevant hashtags from your images using AI</li>
+                        <li>Improve our AI model's accuracy and performance</li>
+                        <li>Maintain and enhance the application's functionality</li>
+                        <li>Analyze usage patterns to improve user experience</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Data Storage</h2>
+                    <p>Your data is stored as follows:</p>
+                    <ul>
+                        <li>Images and generated hashtags are stored temporarily in Google Cloud Storage for processing</li>
+                        <li>Generation history is stored locally on your device using browser storage</li>
+                        <li>No personal information is permanently stored on our servers</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Progressive Web App Data</h2>
+                    <p>As a Progressive Web App (PWA), Hashtag AI:</p>
+                    <ul>
+                        <li>Uses service workers to enable offline functionality</li>
+                        <li>Caches app resources locally on your device</li>
+                        <li>Stores app preferences and history in your browser's local storage</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Analytics</h2>
+                    <p>We use Google Analytics to:</p>
+                    <ul>
+                        <li>Understand how users interact with our application</li>
+                        <li>Improve our services based on usage patterns</li>
+                        <li>Track anonymous usage statistics</li>
+                    </ul>
+                    <p>You can opt out of Google Analytics by using the Google Analytics Opt-out Browser Add-on.</p>
+                </section>
+
+                <section>
+                    <h2>Data Security</h2>
+                    <p>We implement security measures to protect your information:</p>
+                    <ul>
+                        <li>Secure HTTPS connections for all data transfers</li>
+                        <li>Temporary storage with automatic deletion</li>
+                        <li>Limited access to processing servers</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Changes to This Policy</h2>
+                    <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
+                </section>
+
+                <section>
+                    <h2>Contact Us</h2>
+                    <p>If you have any questions about this Privacy Policy, please contact us.</p>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/sw-register.js') }}"></script>
+</body>
+</html>

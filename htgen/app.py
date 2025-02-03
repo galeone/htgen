@@ -145,6 +145,17 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/privacy")
+def privacy():
+    """
+    Renders the privacy policy page.
+
+    Returns:
+        Response: The rendered HTML template for the privacy policy page.
+    """
+    return render_template("privacy.html")
+
+
 @app.route("/sw.js")
 def sw():
     """
