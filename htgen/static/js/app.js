@@ -5,6 +5,9 @@ const result = document.getElementById('result');
 const spinner = document.getElementById('spinner');
 const languageSelect = document.getElementById('languageSelect');
 const topicInput = document.getElementById('topicInput');
+const imageModal = document.getElementById('imageModal');
+const modalImage = document.getElementById('modalImage');
+const modalClose = document.querySelector('.modal-close');
 
 function capitalizeFirstLetter(val) {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
@@ -248,6 +251,37 @@ function showResult(message, isSuccess) {
     });
 }
 
+function openModal(fullImg) {
+    modalImage.src = fullImg.src;
+    imageModal.classList.add('show');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+}
+
+function closeModal() {
+    imageModal.classList.remove('show');
+    document.body.style.overflow = ''; // Restore scrolling
+    setTimeout(() => {
+        modalImage.src = ''; // Clear the source after animation
+    }, 300);
+}
+
+// Close modal when clicking outside the image
+imageModal.addEventListener('click', (e) => {
+    if (e.target === imageModal) {
+        closeModal();
+    }
+});
+
+// Close modal when clicking the close button
+modalClose.addEventListener('click', closeModal);
+
+// Close modal on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && imageModal.classList.contains('show')) {
+        closeModal();
+    }
+});
+
 function showHistory(entries) {
     let content;
     if (entries.length === 0) {
@@ -269,7 +303,7 @@ function showHistory(entries) {
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
-                <img src="${entry.image}" class="history-thumbnail">
+                <img src="${entry.image}" class="history-thumbnail" onclick="openModal(this)">
                 <div class="entry-meta">
                     <div class="meta-info">
                         <span class="timestamp">${formattedDate}</span>
