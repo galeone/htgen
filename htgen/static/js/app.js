@@ -218,7 +218,10 @@ function showHashtagsWithCopy(hashtags) {
     result.className = ''; // Reset class - remove error/success
 
     // Scroll to the result
-    result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    result.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+    });
 }
 
 function copyHashtags(button) {
@@ -239,7 +242,10 @@ function showResult(message, isSuccess) {
     result.className = isSuccess ? 'success' : 'error';
 
     // Scroll to error messages too
-    result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    result.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+    });
 }
 
 function showHistory(entries) {
