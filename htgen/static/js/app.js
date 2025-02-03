@@ -46,7 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show initial connection status if offline
     if (!navigator.onLine) {
-        showNotification('You are currently offline. Changes will be saved locally.', true);
+        showNotification('You are offline.', true);
+        const generateButton = document.querySelector('.generate-button');
+        generateButton.disabled = true;
+        generateButton.style.opacity = '0.5';
     }
 });
 

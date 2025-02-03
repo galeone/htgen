@@ -3,7 +3,9 @@ const STATIC_CACHE = [
     '/',
     '/static/manifest.json',
     '/static/css/style.css',
+    '/static/js/app.js',
     '/static/js/localstorage.js',
+    '/static/js/sw-register.js',
     '/static/icons/icon-96x96.png',
     '/static/icons/icon-144x144.png',
     '/static/icons/icon-192x192.png',
@@ -47,35 +49,36 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // Handle API requests
-    if (event.request.url.includes('/hashtags')) {
-        return event.respondWith(handleApiRequest(event));
-    }
-
-    // Handle static assets
+    // Handle static assets with stale-while-revalidate strategy
     event.respondWith(
         caches.match(event.request)
-            .then(response => {
-                if (response) {
-                    return response;
-                }
-
-                return fetch(event.request)
-                    .then(response => {
-                        // Don't cache non-successful responses
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
+            .then(cachedResponse => {
+                const fetchPromise = fetch(event.request)
+                    .then(async networkResponse => {
+                        // Don't process non-successful responses
+                        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+                            return networkResponse;
                         }
 
-                        // Clone the response
-                        const responseToCache = response.clone();
+                        // If we have a cached response, compare it with the network response
+                        if (cachedResponse) {
+                            const cachedText = await cachedResponse.clone().text();
+                            const networkText = await networkResponse.clone().text();
 
-                        caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(event.request, responseToCache);
-                            });
+                            // Only update cache if the content has changed
+                            if (cachedText !== networkText) {
+                                const cache = await caches.open(CACHE_NAME);
+                                await cache.put(event.request, networkResponse.clone());
+                                console.log('[Service Worker] Updated cached response for:', event.request.url);
+                            }
+                        } else {
+                            // No cached response exists, cache the network response
+                            const cache = await caches.open(CACHE_NAME);
+                            await cache.put(event.request, networkResponse.clone());
+                            console.log('[Service Worker] Cached new response for:', event.request.url);
+                        }
 
-                        return response;
+                        return networkResponse;
                     })
                     .catch(() => {
                         // Return offline page if available
@@ -84,60 +87,9 @@ self.addEventListener('fetch', event => {
                         }
                         return null;
                     });
+
+                // Return cached response immediately if available, otherwise wait for network
+                return cachedResponse || fetchPromise;
             })
     );
-});
-
-// Handle API Requests
-function handleApiRequest(event) {
-    // we need to clone the request because fetch consumes it
-    // and in the catch we can't call clone
-    let request = event.request.clone();
-    return fetch(event.request)
-        .then(response => response)
-        .catch(async error => {
-            // If fetch failed, assume we're offline
-            if (error.message.toLowerCase().includes('failed to fetch')) {
-                // Notify all clients about offline state
-                const clients = await self.clients.matchAll();
-                clients.forEach(client => {
-                    client.postMessage({
-                        type: 'OFFLINE_STATE',
-                        payload: {
-                            isOffline: true,
-                            message: 'You are offline. Try again later.'
-                        }
-                    });
-                });
-            }
-            throw error;
-        });
-}
-
-// Listen for online event
-self.addEventListener('online', async () => {
-    const clients = await self.clients.matchAll();
-    clients.forEach(client => {
-        client.postMessage({
-            type: 'OFFLINE_STATE',
-            payload: {
-                isOffline: false,
-                message: 'You are back online!'
-            }
-        });
-    });
-});
-
-// Listen for offline event
-self.addEventListener('offline', async () => {
-    const clients = await self.clients.matchAll();
-    clients.forEach(client => {
-        client.postMessage({
-            type: 'OFFLINE_STATE',
-            payload: {
-                isOffline: true,
-                message: 'You are offline. Changes will be saved locally.'
-            }
-        });
-    });
 });

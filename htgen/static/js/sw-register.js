@@ -14,15 +14,13 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('online', () => {
         showNotification('You are back online!');
         const generateButton = document.querySelector('.generate-button');
-        // Re-enable generate button and show online message
         generateButton.disabled = false;
         generateButton.style.opacity = '1';
     });
 
     window.addEventListener('offline', () => {
-        showNotification('You are offline. Changes will be saved locally.', true);
+        showNotification('You are offline. Try again later.', true);
         const generateButton = document.querySelector('.generate-button');
-        // Disable generate button and show offline message
         generateButton.disabled = true;
         generateButton.style.opacity = '0.5';
     });
