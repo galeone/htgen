@@ -115,9 +115,8 @@ You can run the application as a systemd service to ensure it starts automatical
 
 Note: https://chromeos.dev/en/publish/pwa-in-play followed for publishing on the Google Play Store.
 
-- `keytool -list -v -keystore keystores/android.pwa -alias android -keypass $PDW1 -storepass $PWD2 | grep SHA256`
-- `bubblewrap fingerprint add <fingerprint>`
-- `cp assetlinks.json htgen/static/.well-known/assetlinks.json`
+- Keep the `assetlinks.json` from the Play Console in Configuration -> App Signature -> JSON Digital Asset Links
+- `cp assetlinks.json htgen/static/assetlinks.json`
 
 ## Credits
 
