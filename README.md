@@ -111,5 +111,14 @@ You can run the application as a systemd service to ensure it starts automatical
    sudo systemctl start htgen@yourusername
    ```
 
----
+## PWA = Runs Everywhere
+
+Note: https://chromeos.dev/en/publish/pwa-in-play followed for publishing on the Google Play Store.
+
+- `keytool -list -v -keystore keystores/android.pwa -alias android -keypass $PDW1 -storepass $PWD2 | grep SHA256`
+- `bubblewrap fingerprint add <fingerprint>`
+- `cp assetlinks.json htgen/static/.well-known/assetlinks.json`
+
+## Credits
+
 Google Cloud credits are provided for this project. #VertexAISprint

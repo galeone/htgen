@@ -173,5 +173,19 @@ def sw():
     return "", 404
 
 
+@app.route("/.well-known/assetlinks.json")
+def asset_links():
+    """
+    Server the assetlinks.json file for Android app linking.
+    """
+
+    with open(
+        os.path.join(app.static_folder, "js", "assetlinks.json"), "r", encoding="utf-8"
+    ) as f:
+        content = f.read()
+        return content, 200, {"Content-Type": "application/json"}
+    return "", 404
+
+
 if __name__ == "__main__":
     app.run(debug=True)
