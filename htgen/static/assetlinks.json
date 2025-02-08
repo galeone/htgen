@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "eu.pgaleone.ht",
+      "sha256_cert_fingerprints":
+        ["47:67:E3:68:DE:64:8D:1F:32:50:9E:EF:9B:8E:AB:4E:E9:72:CF:A1:75:D4:0F:80:BA:7B:9C:FB:BB:6D:6C:73"]
+    }
+  }
+]

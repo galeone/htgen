@@ -6,10 +6,10 @@ from datetime import datetime
 from io import BytesIO
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, render_template, request
 from google.cloud import storage
 from werkzeug.utils import secure_filename
-from ai import init_vertex_ai, get_image_hashtags
+from ai import get_image_hashtags, init_vertex_ai
 
 app = Flask(__name__)
 
@@ -180,7 +180,7 @@ def asset_links():
     """
 
     with open(
-        os.path.join(app.static_folder, "js", "assetlinks.json"), "r", encoding="utf-8"
+        os.path.join(app.static_folder, "assetlinks.json"), "r", encoding="utf-8"
     ) as f:
         content = f.read()
         return content, 200, {"Content-Type": "application/json"}
