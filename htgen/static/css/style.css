@@ -739,3 +739,19 @@ input[type="file"] {
         background: var(--gray-800);
     }
 }
+
+.featured-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.featured-badge a {
+    display: block;
+}
+
+.featured-badge img {
+    max-width: 100%;
+    height: auto;
+}
