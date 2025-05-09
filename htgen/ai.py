@@ -65,7 +65,7 @@ def get_image_hashtags(
         logger.warning("Error getting location information: %s", str(e))
 
     # Initialize Gemini model
-    model = GenerativeModel("gemini-1.5-flash")
+    model = GenerativeModel("gemini-2.0-flash")
 
     if topic:
         if additional_prompt:
