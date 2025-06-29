@@ -23,6 +23,28 @@ function showNotification(message, isError = false) {
     }, 3000);
 }
 
+function showOfflineStatus() {
+    const generateButton = document.querySelector('.generate-button');
+    generateButton.disabled = true;
+    generateButton.style.opacity = '0.5';
+
+    const notificationContainer = document.getElementById('notificationContainer');
+    notificationContainer.innerHTML = `
+        <span>📱 You're offline - You can still browse your history!</span>
+    `;
+    notificationContainer.style.backgroundColor = '#6c757d';
+    notificationContainer.style.transform = 'translateX(0)';
+    // Keep showing offline status until online
+}
+
+function showOnlineStatus() {
+    const generateButton = document.querySelector('.generate-button');
+    generateButton.disabled = false;
+    generateButton.style.opacity = '1';
+
+    showNotification('🌐 You\'re back online!');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Get browser language (e.g., "en-US" -> "en")
     const browserLang = navigator.language.split('-')[0];
@@ -49,10 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show initial connection status if offline
     if (!navigator.onLine) {
-        showNotification('You are offline.', true);
-        const generateButton = document.querySelector('.generate-button');
-        generateButton.disabled = true;
-        generateButton.style.opacity = '0.5';
+        showOfflineStatus();
+    }
+
+    // Listen for online/offline status changes
+    window.addEventListener('online', showOnlineStatus);
+    window.addEventListener('offline', showOfflineStatus);
+
+    // Add search functionality for history
+    const historySearch = document.getElementById('historySearch');
+    if (historySearch) {
+        historySearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value;
+            showHistory(allHistoryEntries, searchTerm);
+        });
     }
 });
 
@@ -92,13 +124,59 @@ document.getElementById('cameraPlaceholder').addEventListener('click', () => {
     fileInput.click();
 });
 
+// Add drag and drop functionality
+const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+
+cameraPlaceholder.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    cameraPlaceholder.classList.add('drag-over');
+});
+
+cameraPlaceholder.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    cameraPlaceholder.classList.remove('drag-over');
+});
+
+cameraPlaceholder.addEventListener('drop', (e) => {
+    e.preventDefault();
+    cameraPlaceholder.classList.remove('drag-over');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        const file = files[0];
+
+        // Check file type
+        if (!ALLOWED_EXTENSIONS.includes(file.name.split('.').pop().toLowerCase())) {
+            showNotification(`Please drop a valid image file (${ALLOWED_EXTENSIONS.join(', ').toUpperCase()})`, true);
+            return;
+        }
+
+        // Check file size (max 10MB)
+        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+        if (file.size > maxSize) {
+            showNotification('Image file is too large. Please drop an image smaller than 10MB.', true);
+            return;
+        }
+
+        // Create a new FileList-like object
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
+
+        // Trigger the change event
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
+    }
+});
+
 const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "heic", "heif"];
 
 fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
+        // Check file type
         if (!ALLOWED_EXTENSIONS.includes(file.name.split('.').pop().toLowerCase())) {
-            showNotification('Please select a valid image file.', true);
+            showNotification(`Please select a valid image file (${ALLOWED_EXTENSIONS.join(', ').toUpperCase()})`, true);
             fileInput.value = '';
             return;
         }
@@ -275,24 +353,90 @@ imageModal.addEventListener('click', (e) => {
 // Close modal when clicking the close button
 modalClose.addEventListener('click', closeModal);
 
-// Close modal on escape key
+// Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+    // Close modal on escape key
     if (e.key === 'Escape' && imageModal.classList.contains('show')) {
         closeModal();
+        return;
+    }
+
+    // Only process shortcuts when not in input fields
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+        return;
+    }
+
+    // Ctrl/Cmd + O: Open file selector
+    if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+        e.preventDefault();
+        fileInput.click();
+        return;
+    }
+
+    // Enter: Generate hashtags (if image is selected)
+    if (e.key === 'Enter' && fileInput.files.length > 0) {
+        e.preventDefault();
+        const generateButton = document.querySelector('.generate-button');
+        if (!generateButton.disabled) {
+            generateButton.click();
+        }
+        return;
+    }
+
+    // H: Toggle to Home section
+    if (e.key === 'h' || e.key === 'H') {
+        const homeMenuItem = document.querySelector('.menu-item[data-section="homeSection"]');
+        homeMenuItem.click();
+        return;
+    }
+
+    // R: Toggle to History section
+    if (e.key === 'r' || e.key === 'R') {
+        const historyMenuItem = document.querySelector('.menu-item[data-section="historySection"]');
+        historyMenuItem.click();
+        return;
     }
 });
 
-function showHistory(entries) {
+let allHistoryEntries = []; // Store all entries for search
+
+function showHistory(entries, searchTerm = '') {
+    allHistoryEntries = entries; // Store for search functionality
+
+    // Filter entries based on search term
+    let filteredEntries = entries;
+    if (searchTerm) {
+        filteredEntries = entries.filter(entry => {
+            const hashtagsText = entry.hashtags.join(' ').toLowerCase();
+            const topic = (entry.topic || '').toLowerCase();
+            const language = entry.language.toLowerCase();
+            const search = searchTerm.toLowerCase();
+
+            return hashtagsText.includes(search) ||
+                   topic.includes(search) ||
+                   language.includes(search);
+        });
+    }
+
     let content;
-    if (entries.length === 0) {
-        content = `
-            <div class="empty-history">
-                <p>Your generated hashtags will appear here!</p>
-                <p>Upload an image in the Home section to get started.</p>
-            </div>
-        `;
+    if (filteredEntries.length === 0) {
+        if (searchTerm) {
+            content = `
+                <div class="empty-history">
+                    <p>No results found for "${searchTerm}"</p>
+                    <p>Try a different search term or clear the search.</p>
+                </div>
+            `;
+        } else {
+            content = `
+                <div class="empty-history">
+                    <p>Your generated hashtags will appear here!</p>
+                    <p>Upload an image in the Home section to get started.</p>
+                </div>
+            `;
+        }
     } else {
-        content = entries.map(entry => {
+        content = filteredEntries.map(entry => {
             const date = new Date(entry.timestamp);
             const formattedDate = date.toLocaleString();
             return `
@@ -328,14 +472,61 @@ function showHistory(entries) {
         }).join('');
     }
 
-    document.getElementById('historySection').innerHTML = `
-        <h2>Previous Generations</h2>
-        ${content}
-    `;
+    document.getElementById('historyContent').innerHTML = content;
 }
+
+// Store deleted entry for undo functionality
+let deletedEntry = null;
 
 // Delete history entry
 function deleteHistoryEntry(timestamp) {
+    // Get the entry before deleting it
+    const allHistory = JSON.parse(localStorage.getItem('htgenHistory') || '[]');
+    deletedEntry = allHistory.find(entry => entry.timestamp === timestamp);
+
     const history = deleteFromStorage(timestamp);
     showHistory(history);
+
+    // Show undo notification
+    if (deletedEntry) {
+        showUndoNotification();
+    }
+}
+
+function showUndoNotification() {
+    const notificationContainer = document.getElementById('notificationContainer');
+    notificationContainer.innerHTML = `
+        <span>Entry deleted</span>
+        <button onclick="undoDelete()" style="background: none; border: none; color: white; text-decoration: underline; cursor: pointer; margin-left: 10px;">Undo</button>
+    `;
+    notificationContainer.style.backgroundColor = '#6c757d';
+    notificationContainer.style.transform = 'translateX(0)';
+
+    // Auto-hide after 5 seconds (longer than normal to give time to undo)
+    setTimeout(() => {
+        notificationContainer.style.transform = 'translateX(150%)';
+        deletedEntry = null; // Clear the deleted entry after timeout
+    }, 5000);
+}
+
+function undoDelete() {
+    if (deletedEntry) {
+        // Re-add the entry to storage
+        const history = JSON.parse(localStorage.getItem('htgenHistory') || '[]');
+        history.push(deletedEntry);
+        history.sort((a, b) => a.timestamp - b.timestamp); // Sort by timestamp
+        localStorage.setItem('htgenHistory', JSON.stringify(history));
+
+        // Refresh history display
+        showHistory(history.reverse());
+
+        // Hide notification
+        document.getElementById('notificationContainer').style.transform = 'translateX(150%)';
+
+        // Show success message
+        showNotification('Entry restored successfully!');
+
+        // Clear deleted entry
+        deletedEntry = null;
+    }
 }

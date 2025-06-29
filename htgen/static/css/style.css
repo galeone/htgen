@@ -105,6 +105,14 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+.camera-label.drag-over {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(0, 123, 255, 0.05);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
 .camera-label svg {
     width: 48px;
     height: 48px;
@@ -112,9 +120,18 @@ body {
     transition: var(--transition);
 }
 
-.camera-label:hover svg {
+.camera-label:hover svg,
+.camera-label.drag-over svg {
     color: var(--primary);
     transform: scale(1.1);
+}
+
+.keyboard-hint {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.8em;
+    color: var(--gray-500);
+    font-style: italic;
 }
 
 .image-preview {
@@ -686,6 +703,10 @@ input[type="file"] {
     .empty-history,
     .bottom-menu {
         background-color: var(--gray-800);
+    }
+
+    .camera-label.drag-over {
+        background: rgba(0, 123, 255, 0.1);
     }
 
     .input-group label {
