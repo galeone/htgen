@@ -8,8 +8,9 @@ from io import BytesIO
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
 from google.cloud import storage
+from google.oauth2.service_account import Credentials
 from werkzeug.utils import secure_filename
-from ai import get_image_hashtags, init_vertex_ai
+from ai import VertexAI
 
 app = Flask(__name__)
 
@@ -34,10 +35,14 @@ if not GOOGLE_CLOUD_PROJECT:
 if not BUCKET_NAME:
     raise ValueError("BUCKET_NAME environment variable is required")
 
-init_vertex_ai(GOOGLE_CLOUD_PROJECT)
+vertex_ai = VertexAI(GOOGLE_CLOUD_PROJECT)
 
 # Initialize Google Cloud Storage client
-storage_client = storage.Client()
+storage_client = storage.Client(
+    credentials=Credentials.from_service_account_file(
+        os.getenv("GOOGLE_CREDENTIALS_PATH")
+    )
+)
 bucket = storage_client.bucket(BUCKET_NAME)
 
 # Gemini's allowed file extensions
@@ -116,7 +121,7 @@ def generate_hashtags():
             temp_file = BytesIO(file_content)
 
             # Get hashtags from the image
-            hashtags = get_image_hashtags(temp_file, language, topic)
+            hashtags = vertex_ai.get_image_hashtags(temp_file, language, topic)
 
             # Create and upload CSV file with hashtags
             csv_filename = filename.rsplit(".", 1)[0] + ".csv"

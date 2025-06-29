@@ -1,5 +1,5 @@
 flask
-google-cloud-aiplatform
+google-genai
 google-cloud-storage
 python-dotenv
 python-magic
