@@ -66,7 +66,7 @@ There are two ways to run the application in production mode using Docker:
    docker run -p 8000:8000 \
      -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT \
      -e BUCKET_NAME=$BUCKET_NAME \
-     -e GOOGLE_APPLICATION_CREDENTIALS="/app/credentials.json" \
+     -e GOOGLE_CREDENTIALS_PATH="/app/credentials.json" \
      -v /path/to/your/credentials.json:/app/credentials.json \
      htgen
    ```
@@ -76,8 +76,7 @@ There are two ways to run the application in production mode using Docker:
 
 - `GOOGLE_CLOUD_PROJECT`: Your Google Cloud project ID
 - `BUCKET_NAME`: The Google Cloud Storage bucket name for storing images
-- `GOOGLE_APPLICATION_CREDENTIALS`: Path to the credentials file inside the container (should be inside /app, so "/app/credentials.json" is the default value)
-- `GOOGLE_CREDENTIALS_PATH`: (Docker Compose only) Path to your local credentials file
+- `GOOGLE_CREDENTIALS_PATH`: Path to the credentials file inside the container (should be inside /app, so "/app/credentials.json" is the default value)
 
 ### Volume Mount
 
